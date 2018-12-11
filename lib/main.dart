@@ -46,18 +46,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter -= 0.1;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,12 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
               _MyRowItem(time: 100,name: "Mobile-Computing"),
               _MyRowItem(time: 120,name: "Programmierparadigmen", date: DateTime.utc(2019,4,4,11,00,0,0,0)),
             ],
-          ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Halloas',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+          ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
