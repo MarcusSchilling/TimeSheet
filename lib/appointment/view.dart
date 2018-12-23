@@ -12,17 +12,20 @@ import 'package:optional/optional_internal.dart';
 
 class AppointmentView extends StatelessWidget {
 
-  List<ValueChanged<dynamic>> updates;
   VoidCallback save;
   MyAppointmentView view;
   AppointmentModel model;
+  var exit;
 
-  AppointmentView(this.updates, this.save, this.model);
+  AppointmentView(this.save, this.model, Future<bool> exit()) {
+    this.exit = exit;
+  }
 
   @override
   Widget build(BuildContext context) {
-    view = MyAppointmentView(model, save, title: "Appointment");
+    view = MyAppointmentView(model, save, exit ,title: "Appointment");
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: "Appointment",
       theme: ThemeData(
         primarySwatch: Colors.red,
@@ -38,15 +41,16 @@ class AppointmentView extends StatelessWidget {
 }
 
 class MyAppointmentView extends StatefulWidget {
-  MyAppointmentView(this.model, this.save , {Key key, title}) : super(key: key);
+  MyAppointmentView(this.model, this.save, this.exit , {Key key, title}) : super(key: key);
 
   AppointmentModel model;
   VoidCallback save;
   _MyAppointmentViewState viewState;
+  var exit;
 
   @override
   _MyAppointmentViewState createState() {
-    viewState = _MyAppointmentViewState(this.model, this.save);
+    viewState = _MyAppointmentViewState(this.model, this.save, this.exit);
     return viewState;
   }
 
@@ -66,10 +70,16 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   VoidCallback save;
   AppointmentModel model;
   BuildContext context;
+  var exit;
 
-  _MyAppointmentViewState(this.model, this.save);
+  _MyAppointmentViewState(this.model, this.save, this.exit);
 
-  @override
+
+  Future<bool> _onWillPop() {
+    return exit();
+  }
+
+    @override
   Widget build(BuildContext context) {
     var listView = ListView(children: <Widget>[
         nameRow(),
@@ -78,7 +88,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
       ],
         // This trailing comma makes auto-formatting nicer for build methods.
       );
-    return new Scaffold(
+    Scaffold scaffold = new Scaffold(
       key: Key("Scaffold"),
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -97,6 +107,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
       ),
 
     );
+    return new WillPopScope(child: scaffold, onWillPop: _onWillPop);
   }
 
   Row nameRow() {
@@ -147,7 +158,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
         decoration: InputDecoration(
             border: InputBorder.none,
             hintText: "Bitte Zeit der Aufgabe eingeben",
-            labelText: model.timeSheetData.time.toString()
+            labelText: model.timeSheetData.timeFormatted
         ),
         keyboardType: TextInputType.number,
         onChanged: (value) => model.updateTime(double.parse(value)),

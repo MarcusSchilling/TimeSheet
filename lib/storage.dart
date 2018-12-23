@@ -58,7 +58,7 @@ class Storage {
       var time = iterator.current;
       iterator.moveNext();
       var date = Optional.ofNullable(DateTime.parse(iterator.current));
-      var timeSheetData = TimeSheetData.from(time, name, date, null);
+      var timeSheetData = TimeSheetData.from(time, name, date);
       timeSheets.add(timeSheetData);
     }
     return timeSheets;

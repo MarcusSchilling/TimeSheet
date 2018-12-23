@@ -4,11 +4,10 @@ import 'package:optional/optional_internal.dart';
 
 class AppointmentModel {
 
-
   TimeSheetData timeSheetData;
 
   AppointmentModel.of(Optional<TimeSheetData> timeSheet) {
-    this.timeSheetData = timeSheet.isPresent ? timeSheet.value : TimeSheetData.from(null, null, null, null);
+    this.timeSheetData = timeSheet.isPresent ? timeSheet.value : TimeSheetData.from(null, null, null);
   }
 
   TimeSheetData getTimeSheet() {
@@ -25,10 +24,6 @@ class AppointmentModel {
 
   void updateName(String name) {
     timeSheetData.name = name;
-  }
-
-  void updateUpdate(Update update) {
-    timeSheetData.update = update;
   }
 
   bool hasName() => timeSheetData.name != null;

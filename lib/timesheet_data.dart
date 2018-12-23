@@ -4,7 +4,6 @@ class TimeSheetData {
   double time;
   String name;
   Optional<DateTime> date;
-  Update update;
 
   TimeSheetData(String input) {
     var atoms = input.split("\n");
@@ -14,8 +13,7 @@ class TimeSheetData {
     name = atoms.elementAt(1);
   }
 
-  TimeSheetData.from(this.time, this.name, this.date, this.update);
-
+  TimeSheetData.from(this.time, this.name, this.date);
 
   @override
   bool operator ==(Object other) =>
@@ -38,19 +36,23 @@ class TimeSheetData {
 
   String get title => name + ": " + ((time * 100).round() / 100).toString();
 
+  String get formattedDate =>
+      date.isPresent?"${date.value.year.toString()}-"
+          "${date.value.month.toString().padLeft(2, '0')}-"
+          "${date.value.day.toString().padLeft(2, '0')}" : "";
+
+  String get timeFormatted => ((time * 100).round() / 100).toString();
+
   @override
   String toString() {
-    var nonOptionalDate = date.orElseGet(() => DateTime(0));
-    String dateSlug ="${nonOptionalDate.year.toString()}-${nonOptionalDate.month.toString().padLeft(2,'0')}-${nonOptionalDate.day.toString().padLeft(2,'0')}";
-    return ((time * 10).round() / 10).toString() + "\n" + name + "\n" + dateSlug + '\n';
+    return timeFormatted + "\n" + name + "\n" + formattedDate + '\n';
   }
 
   bool isValid() {
     return time != null && name != null && date != null;
   }
-}
-abstract class Update {
 
-  void update(double time);
-
+  void decrement(double value) {
+    this.time += value;
+  }
 }

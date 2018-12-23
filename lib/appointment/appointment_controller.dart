@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_app/appointment/model.dart';
 import 'package:flutter_app/appointment/view.dart';
 import 'package:flutter_app/data_service.dart';
-import 'package:flutter_app/main.dart';
+import 'package:flutter_app/overview/overview_controller.dart';
 import 'package:flutter_app/timesheet_data.dart';
 import 'package:optional/optional_internal.dart';
 
@@ -15,16 +15,19 @@ class AppointmentController{
   DataService dataService;
 
   AppointmentController(Optional<TimeSheetData> timeSheet) {
-    List<ValueChanged<dynamic>> list = List();
     model = AppointmentModel.of(timeSheet);
-    view = AppointmentView(list, timeSheet.isPresent ? update : save, model);
+    view = AppointmentView(timeSheet.isPresent ? update : save, model, exit);
     dataService = DataService();
+  }
+
+  Future<bool> exit() async {
+    OverviewController();
   }
 
   void save() {
     if (model.getTimeSheet().isValid()) {
       dataService.store(model.getTimeSheet());
-      runApp(MyApp());
+      OverviewController();
     } else {
       view.error("The Input is not valid");
     }
@@ -33,7 +36,7 @@ class AppointmentController{
   void update() {
     if (model.getTimeSheet().isValid()) {
       dataService.update(model.getTimeSheet());
-      runApp(MyApp());
+      OverviewController();
     } else {
       view.error("This input cannot be updated. It is not Valid.");
     }
