@@ -1,15 +1,24 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/appointment/appointment_controller.dart';
+import 'package:flutter_app/data_service.dart';
+import 'package:flutter_app/storage.dart';
+import 'package:flutter_app/timesheet_data.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:optional/optional.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
-      title: 'Timesheet',
+      title: 'TimeSheet',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -22,7 +31,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: 'Learning timesheet'),
+      home: MyHomePage(title: 'LearningtimeSheet'),
     );
   }
 }
@@ -47,6 +56,26 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  DataService dataService;
+
+  bool loading = true;
+
+  List<_MyRowItem> myRowItems;
+
+  _MyHomePageState() {
+    dataService = new DataService();
+    myRowItems = List();
+    dataService.getTimeSheetData()
+        .then((list) {
+      for (var timeSheet in list) {
+        myRowItems.add(_MyRowItem(timeSheet));
+      }
+      setState(() {
+        loading = false;
+      });
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,123 +85,76 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    var list = ListView.builder(
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            child: myRowItems.elementAt(index),
+            onTap: () {
+              _move(Optional.of(myRowItems.elementAt(index).timeSheet));
+            },
+          );
+        },
+      itemCount: loading ? 0 : myRowItems.length,
+    );
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(20.0),
-            children: <Widget>[
-              _MyRowItem(time: 50, name: "WASA", date: DateTime.utc(2019,2,6,14,30,0,0,0)),
-              _MyRowItem(time: 70,name: "Organisationsmanagement",date: DateTime.utc(2019,2,14,14,30,0,0,0)),
-              _MyRowItem(time: 80,name: "Rewe", date: DateTime.utc(2019,2,15,9,0,0,0,0)),
-              _MyRowItem(time: 70,name: "Finanzwirtschaft-Rewe", date: DateTime.utc(2019,2,28,8,0,0,0,0)),
-              _MyRowItem(time: 100,name: "Mobile-Computing"),
-              _MyRowItem(time: 120,name: "Programmierparadigmen", date: DateTime.utc(2019,4,4,11,00,0,0,0)),
-            ],
-          ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: list, // This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _move(Optional<TimeSheetData>.of(null)),
+        child: Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+  void _move(Optional<TimeSheetData> timeSheet) {
+    AppointmentController controller = AppointmentController(timeSheet);
+    runApp(controller.view);
+  }
+
 }
 
 class _MyRowItem extends StatefulWidget {
 
-  double time;
-  String name;
-  DateTime date;
+  TimeSheetData timeSheet;
 
-  _MyRowItem({double time, String name, DateTime date}) {
-    this.time = time;
-    this.name = name;
-    this.date = date;
-  }
+
+  _MyRowItem(this.timeSheet);
 
   @override
   State<StatefulWidget> createState() {
-    return date==null? _MyRowItemState(time: time, name: name):_MyRowItemStateWithDate(time: time, name: name, date: date);
+    return _MyRowItemState(timeSheet);
   }
 
 }
 
 class _MyRowItemState extends State<_MyRowItem> {
-  double time;
-  String name;
-  _Storage storage;
+  TimeSheetData timeSheet;
 
   void _incrementCounter() {
     setState(() {
-      time -= 0.1;
+     timeSheet.time -= 0.15;
     });
-    storage.writeCounter(name, time);
   }
 
-  _MyRowItemState({double time, String name}) {
-    storage = _Storage();
-    this.time = 0;
-    storage.readCounter(name)
-          .then((double a) => this.time += a)
-          .catchError((e) => this.time = time);
-    this.name = name;
+  _MyRowItemState(TimeSheetData timeSheet) {
+    this.timeSheet = timeSheet;
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(title: Text(name + ": " + ((time*10).round()/10).toString(), textDirection: TextDirection.ltr,textAlign: TextAlign.left),
+    if(timeSheet.hasDate()) {
+      var dateTime = timeSheet.date.value;
+      String dateSlug ="${dateTime.year.toString()}-${dateTime.month.toString().padLeft(2,'0')}-${dateTime.day.toString().padLeft(2,'0')}";
+      return ListTile(title: Text(timeSheet.title, textDirection: TextDirection.ltr,textAlign: TextAlign.left),
+          trailing: IconButton(onPressed: _incrementCounter,icon: Icon(Icons.add)),
+          leading: Text(dateSlug));
+    }
+    return ListTile(title: Text(timeSheet.title, textDirection: TextDirection.ltr,textAlign: TextAlign.left),
         trailing: IconButton(onPressed: _incrementCounter,icon: Icon(Icons.add)));
   }
 
-}
-class _MyRowItemStateWithDate extends _MyRowItemState {
-
-  DateTime date;
-
-  _MyRowItemStateWithDate({double time, String name, DateTime date}): super(time: time, name: name) {
-    this.date = date;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String dateSlug ="${date.year.toString()}-${date.month.toString().padLeft(2,'0')}-${date.day.toString().padLeft(2,'0')}";
-    return ListTile(title: Text(name + ": " + ((time*10).round()/10).toString(), textDirection: TextDirection.ltr,textAlign: TextAlign.left),
-      trailing: IconButton(onPressed: _incrementCounter,icon: Icon(Icons.add)),
-      leading: Text(dateSlug));
-  }
-
-}
-
-class _Storage {
-
-  Future<File> writeCounter(String name, double time) async{
-    final file = await _localFile(name);
-    return file.writeAsString(((time*10).round()/10).toString());
-  }
-
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-
-    return directory.path;
-  }
-
-  Future<File> _localFile(String name) async {
-    final path = await _localPath;
-    return File('$path/' + name + '.txt');
-  }
-
-  Future<double> readCounter(String name) async {
-    try {
-      final file = await _localFile(name);
-
-      // Read the file
-      String contents = await file.readAsString();
-
-      return double.parse(contents);
-    } catch (e) {
-      // If we encounter an error, return 0
-      throw FileSystemException("file not saved");
-    }
-  }
 
 }
