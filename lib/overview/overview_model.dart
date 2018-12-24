@@ -23,6 +23,7 @@ class OverviewModel {
   }
 
   void updateAll(List<TimeSheetData> timeSheet) {
+    timeSheet.sort();
     updateView(timeSheet);
   }
 

@@ -1,6 +1,6 @@
 import 'package:optional/optional_internal.dart';
 
-class TimeSheetData {
+class TimeSheetData extends Comparable<TimeSheetData>{
   double time;
   String name;
   Optional<DateTime> date;
@@ -22,6 +22,8 @@ class TimeSheetData {
               time == other.time &&
               name == other.name &&
               date == other.date;
+
+
 
   @override
   int get hashCode =>
@@ -53,5 +55,11 @@ class TimeSheetData {
 
   void decrement(double value) {
     this.time -= value;
+  }
+
+  @override
+  int compareTo(TimeSheetData other) {
+    return this.date.orElseGet(() => DateTime(0))
+        .compareTo(other.date.orElseGet(() => DateTime(0)));
   }
 }
