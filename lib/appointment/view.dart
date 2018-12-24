@@ -200,7 +200,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
               format: dateFormatter,
               decoration: InputDecoration(labelText: 'Date'),
               onChanged: model.updateDate,
-              initialValue: model.timeSheetData.date.value,
+              initialValue: model.timeSheetData.endDate.value,
             ),
             ),
           ]

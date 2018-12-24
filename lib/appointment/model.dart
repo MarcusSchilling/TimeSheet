@@ -7,7 +7,7 @@ class AppointmentModel {
   TimeSheetData timeSheetData;
 
   AppointmentModel.of(Optional<TimeSheetData> timeSheet) {
-    this.timeSheetData = timeSheet.isPresent ? timeSheet.value : TimeSheetData.from(null, null, null);
+    this.timeSheetData = timeSheet.isPresent ? timeSheet.value : TimeSheetData.from(null, null, null, null);
   }
 
   TimeSheetData getTimeSheet() {
@@ -19,7 +19,7 @@ class AppointmentModel {
   }
 
   void updateDate(DateTime dateTime) {
-    timeSheetData.date = Optional.ofNullable(dateTime);
+    timeSheetData.endDate = Optional.ofNullable(dateTime);
   }
 
   void updateName(String name) {
@@ -28,6 +28,6 @@ class AppointmentModel {
 
   bool hasName() => timeSheetData.name != null;
   bool hasTime() => timeSheetData.time != null;
-  bool hasDate() => timeSheetData.date != null && timeSheetData.date.isPresent;
+  bool hasDate() => timeSheetData.endDate != null && timeSheetData.endDate.isPresent;
 
 }

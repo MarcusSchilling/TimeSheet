@@ -91,7 +91,8 @@ class OverviewState extends State<OverviewPage> {
   var performClickOnTimeSheet;
   var performDelete;
 
-  OverviewState(OverviewModel model,
+  OverviewState(
+      OverviewModel model,
       void changeTimeSheet(),
       void performClickOnTimeSheet(TimeSheetData timeSheet),
       void performDelete(TimeSheetData timeSheet)) {
@@ -154,8 +155,6 @@ class OverviewState extends State<OverviewPage> {
   }
 
 }
-
-
 
 class _MyRowItemState extends State<_MyRowItem> {
   TimeSheetData timeSheet;

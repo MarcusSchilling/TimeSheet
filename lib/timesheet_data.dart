@@ -3,17 +3,18 @@ import 'package:optional/optional_internal.dart';
 class TimeSheetData extends Comparable<TimeSheetData>{
   double time;
   String name;
-  Optional<DateTime> date;
+  Optional<DateTime> startDate;
+  Optional<DateTime> endDate;
 
   TimeSheetData(String input) {
     var atoms = input.split("\n");
     var dateParts = atoms.elementAt(2).split("-");
-    date = Optional.ofNullable(DateTime(int.parse(dateParts.elementAt(0)), int.parse(dateParts.elementAt(1)), int.parse(dateParts.elementAt(2))));
+    startDate = Optional.ofNullable(DateTime(int.parse(dateParts.elementAt(0)), int.parse(dateParts.elementAt(1)), int.parse(dateParts.elementAt(2))));
     time = double.parse(atoms.elementAt(0));
     name = atoms.elementAt(1);
   }
 
-  TimeSheetData.from(this.time, this.name, this.date);
+  TimeSheetData.from(this.time, this.name, this.startDate, this.endDate);
 
   @override
   bool operator ==(Object other) =>
@@ -21,7 +22,7 @@ class TimeSheetData extends Comparable<TimeSheetData>{
           other is TimeSheetData &&
               time == other.time &&
               name == other.name &&
-              date == other.date;
+              startDate == other.startDate;
 
 
 
@@ -29,18 +30,18 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   int get hashCode =>
       time.hashCode ^
       name.hashCode ^
-      date.hashCode;
+      startDate.hashCode;
 
   bool hasDate() {
-    return date.isPresent;
+    return startDate.isPresent;
   }
 
   String get title => name + ": " + ((time * 100).round() / 100).toString();
 
   String get formattedDate =>
-      date.isPresent?"${date.value.year.toString()}-"
-          "${date.value.month.toString().padLeft(2, '0')}-"
-          "${date.value.day.toString().padLeft(2, '0')}" : "";
+      startDate.isPresent?"${startDate.value.year.toString()}-"
+          "${startDate.value.month.toString().padLeft(2, '0')}-"
+          "${startDate.value.day.toString().padLeft(2, '0')}" : "";
 
   String get timeFormatted => ((time * 100).round() / 100).toString();
 
@@ -50,7 +51,7 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   }
 
   bool isValid() {
-    return time != null && name != null && date != null;
+    return time != null && name != null && startDate != null;
   }
 
   void decrement(double value) {
@@ -59,7 +60,7 @@ class TimeSheetData extends Comparable<TimeSheetData>{
 
   @override
   int compareTo(TimeSheetData other) {
-    return this.date.orElseGet(() => DateTime(0))
-        .compareTo(other.date.orElseGet(() => DateTime(0)));
+    return this.startDate.orElseGet(() => DateTime(0))
+        .compareTo(other.startDate.orElseGet(() => DateTime(0)));
   }
 }
