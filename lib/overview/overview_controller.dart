@@ -24,8 +24,13 @@ class OverviewController {
         newTimeSheetData();
       }
     }, (TimeSheetData timeSheet) {
-      timeSheet.decrement(-0.25);
+      timeSheet.decrement(0.25);
       dataService.update(timeSheet);
+      model.update();
+      return;
+    }, (TimeSheetData toDelete) {
+      dataService.remove(toDelete);
+      model.delete(toDelete);
       model.update();
       return;
     });

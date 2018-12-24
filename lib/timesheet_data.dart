@@ -19,7 +19,6 @@ class TimeSheetData {
   bool operator ==(Object other) =>
       identical(this, other) ||
           other is TimeSheetData &&
-              runtimeType == other.runtimeType &&
               time == other.time &&
               name == other.name &&
               date == other.date;
@@ -53,6 +52,6 @@ class TimeSheetData {
   }
 
   void decrement(double value) {
-    this.time += value;
+    this.time -= value;
   }
 }

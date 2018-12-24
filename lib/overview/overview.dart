@@ -13,11 +13,17 @@ class Overview extends StatelessWidget {
   OverviewModel model;
   var changeTimeSheet;
   var performClickOnTimeSheet;
+  var performDelete;
 
-  Overview(this.model, void changeTimeSheet(), void performClickOnTimeSheet(TimeSheetData timeSheetData)){
+  Overview(
+      this.model,
+      void changeTimeSheet(),
+      void performClickOnTimeSheet(TimeSheetData timeSheetData),
+      void performDelete(TimeSheetData timeSheetData)){
     this.model = model;
     this.changeTimeSheet = changeTimeSheet;
     this.performClickOnTimeSheet = performClickOnTimeSheet;
+    this.performDelete = performDelete;
   }
 
   // This widget is the root of your application.
@@ -38,7 +44,7 @@ class Overview extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.red,
       ),
-      home: OverviewPage(model, changeTimeSheet, performClickOnTimeSheet ,title: 'LearningtimeSheet'),
+      home: OverviewPage(model, changeTimeSheet, performClickOnTimeSheet, performDelete ,title: 'LearningtimeSheet'),
     );
   }
 }
@@ -48,11 +54,17 @@ class OverviewPage extends StatefulWidget {
   OverviewModel model;
   var changeTimeSheet;
   var performClickOnTimeSheet;
+  var performDelete;
 
-  OverviewPage(this.model, void changeTimeSheet(), void performClickOnTimeSheet(TimeSheetData timeSheetData), {Key key, this.title}) : super(key: key) {
+  OverviewPage(this.model,
+      void changeTimeSheet(),
+      void performClickOnTimeSheet(TimeSheetData timeSheetData),
+      void performDelete(TimeSheetData timeSheet) ,
+      {Key key, this.title}) : super(key: key) {
     this.model = model;
     this.changeTimeSheet = changeTimeSheet;
     this.performClickOnTimeSheet = performClickOnTimeSheet;
+    this.performDelete = performDelete;
   }
 
   // This widget is the home page of your applic  key);ation. It is stateful, meaning
@@ -67,7 +79,7 @@ class OverviewPage extends StatefulWidget {
   final String title;
 
   @override
-  OverviewState createState() => OverviewState(model, changeTimeSheet, performClickOnTimeSheet);
+  OverviewState createState() => OverviewState(model, changeTimeSheet, performClickOnTimeSheet, performDelete);
 }
 
 class OverviewState extends State<OverviewPage> {
@@ -77,13 +89,18 @@ class OverviewState extends State<OverviewPage> {
   OverviewModel model;
   var changeTimeSheet;
   var performClickOnTimeSheet;
+  var performDelete;
 
-  OverviewState(OverviewModel model, void changeTimeSheet(), void performClickOnTimeSheet(TimeSheetData timeSheet)) {
+  OverviewState(OverviewModel model,
+      void changeTimeSheet(),
+      void performClickOnTimeSheet(TimeSheetData timeSheet),
+      void performDelete(TimeSheetData timeSheet)) {
     this.model = model;
     myRowItems = List();
     model.register(updateView);
     this.changeTimeSheet = changeTimeSheet;
     this.performClickOnTimeSheet = performClickOnTimeSheet;
+    this.performDelete = performDelete;
   }
 
   void updateAll(Optional<TimeSheetData> timeSheet) {
@@ -116,6 +133,7 @@ class OverviewState extends State<OverviewPage> {
           onTap: () {
             updateAll(Optional.of(myRowItems.elementAt(index).timeSheet));
           },
+          onHorizontalDragEnd: (a) => performDelete(myRowItems.elementAt(index).timeSheet),
         );
       },
       itemCount: loading ? 0 : myRowItems.length,

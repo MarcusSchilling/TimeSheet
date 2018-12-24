@@ -19,7 +19,7 @@ class AppointmentModel {
   }
 
   void updateDate(DateTime dateTime) {
-    timeSheetData.date = Optional.of(dateTime);
+    timeSheetData.date = Optional.ofNullable(dateTime);
   }
 
   void updateName(String name) {

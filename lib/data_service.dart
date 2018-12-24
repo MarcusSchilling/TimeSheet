@@ -27,5 +27,9 @@ class DataService {
         .then((value) => true, onError: () => false);
   }
 
+  Future<void> remove(TimeSheetData toDelete) {
+    return storage.delete(toDelete);
+  }
+
 }
 

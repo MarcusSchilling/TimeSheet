@@ -34,5 +34,10 @@ class OverviewModel {
     updateAll(timeSheets);
   }
 
+  void delete(TimeSheetData toDelete) {
+    timeSheets
+        .removeWhere((timeSheet) => timeSheet == toDelete);
+  }
+
 }
 

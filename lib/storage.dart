@@ -36,6 +36,12 @@ class Storage {
         .then((value) => transform(value)));
   }
 
+  Future<void> delete(TimeSheetData toDelete) {
+    return database
+        .then((db) => db.transaction((tr) =>
+        tr.delete("Tasks", where: "name = ?", whereArgs: [toDelete.name])));
+  }
+
   Future<Database> getDatabase() async {
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'demo.db');
