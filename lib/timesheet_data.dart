@@ -34,9 +34,9 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   String get done => ((((initialTime-time) / initialTime) * 100).roundToDouble()).toString() + " %";
 
   String get formattedDate =>
-      startDate.isPresent?"${startDate.value.year.toString()}-"
-          "${startDate.value.month.toString().padLeft(2, '0')}-"
-          "${startDate.value.day.toString().padLeft(2, '0')}" : "";
+      endDate.isPresent?"${endDate.value.year.toString()}-"
+          "${endDate.value.month.toString().padLeft(2, '0')}-"
+          "${endDate.value.day.toString().padLeft(2, '0')}" : "";
 
   String get timeFormatted => ((time * 100).round() / 100).toString();
 
@@ -50,12 +50,16 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   }
 
   void decrement(double value) {
-    this.initialTime -= value;
+    this.time -= value;
   }
 
   @override
   int compareTo(TimeSheetData other) {
-    return this.startDate.orElseGet(() => DateTime(0))
-        .compareTo(other.startDate.orElseGet(() => DateTime(0)));
+    return this.endDate.orElseGet(() => DateTime(0))
+        .compareTo(other.endDate.orElseGet(() => DateTime(0)));
+  }
+
+  bool hasEndDate() {
+    return endDate.isPresent;
   }
 }

@@ -192,7 +192,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
 
   Row dateFormatRow() {
     final dateFormatter = DateFormat("EEEE, MMMM d, yyyy 'at' h:mma");
-    if (model.hasDate()) {
+    if (model.hasEndDate()) {
       return Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

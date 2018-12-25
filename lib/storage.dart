@@ -14,12 +14,12 @@ class Storage {
 
   Future<void> writeCounter(TimeSheetData timeSheet) async {
     return database.then((db) => db.transaction((tr) => tr.execute(
-            "INSERT INTO Tasks(name, time, date, endDate, initial_time) VALUES(?,?,?,?)",
+            "INSERT INTO Tasks(name, time, date, end_date, initial_time) VALUES(?,?,?,?,?)",
             [
               timeSheet.name,
               timeSheet.time,
-              timeSheet.startDate.value.toIso8601String(),
-              timeSheet.endDate.value.toIso8601String(),
+              timeSheet.hasDate() ? timeSheet.startDate.value.toIso8601String() : null,
+              timeSheet.hasEndDate() ? timeSheet.endDate.value.toIso8601String() : null,
               timeSheet.initialTime
             ])));
   }
@@ -29,8 +29,8 @@ class Storage {
             "UPDATE Tasks SET time = ?, date = ?, end_date = ?, initial_time = ? WHERE name == ?",
             [
               timeSheet.time,
-              timeSheet.startDate.value.toIso8601String(),
-              timeSheet.endDate.value.toIso8601String(),
+              timeSheet.hasDate() ? timeSheet.startDate.value.toIso8601String() : null,
+              timeSheet.hasEndDate() ? timeSheet.endDate.value.toIso8601String() : null,
               timeSheet.initialTime,
               timeSheet.name
             ])));
@@ -98,9 +98,15 @@ class Storage {
       iterator.moveNext();
       var time = iterator.current;
       iterator.moveNext();
-      var startDate = Optional.ofNullable(DateTime.parse(iterator.current));
+      var startDate = Optional.of(DateTime.parse(iterator.current));
       iterator.moveNext();
-      var endDate = Optional.ofNullable(DateTime.parse(iterator.current));
+      var end = iterator.current;
+      var endDate;
+      if (end == null) {
+        endDate = Optional<DateTime>.empty();
+      } else {
+        endDate = Optional.ofNullable(DateTime.parse(iterator.current));
+      }
       iterator.moveNext();
       var initialTime = iterator.current;
       var timeSheetData =

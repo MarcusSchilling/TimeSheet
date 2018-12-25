@@ -7,7 +7,7 @@ class AppointmentModel {
   TimeSheetData timeSheetData;
 
   AppointmentModel.of(Optional<TimeSheetData> timeSheet) {
-    this.timeSheetData = timeSheet.isPresent ? timeSheet.value : TimeSheetData.from(null, null, null, Optional.of(DateTime.now()), null);
+    this.timeSheetData = timeSheet.isPresent ? timeSheet.value : TimeSheetData.from(null, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null);
   }
 
   TimeSheetData getTimeSheet() {
@@ -29,6 +29,6 @@ class AppointmentModel {
 
   bool hasName() => timeSheetData.name != null;
   bool hasTime() => timeSheetData.time != null;
-  bool hasDate() => timeSheetData.endDate != null && timeSheetData.endDate.isPresent;
+  bool hasEndDate() => timeSheetData.endDate != null && timeSheetData.endDate.isPresent;
 
 }
