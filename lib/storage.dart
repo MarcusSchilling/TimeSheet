@@ -14,21 +14,24 @@ class Storage {
 
   Future<void> writeCounter(TimeSheetData timeSheet) async {
     return database.then((db) => db.transaction((tr) => tr.execute(
-            "INSERT INTO Tasks(name, time, date, endDate) VALUES(?,?,?)", [
-          timeSheet.name,
-          timeSheet.time,
-          timeSheet.startDate.value.toIso8601String(),
-          timeSheet.endDate.value.toIso8601String()
-        ])));
+            "INSERT INTO Tasks(name, time, date, endDate, initial_time) VALUES(?,?,?,?)",
+            [
+              timeSheet.name,
+              timeSheet.time,
+              timeSheet.startDate.value.toIso8601String(),
+              timeSheet.endDate.value.toIso8601String(),
+              timeSheet.initialTime
+            ])));
   }
 
   Future<void> updateTimeSheet(TimeSheetData timeSheet) {
     return database.then((db) => db.transaction((tr) => tr.execute(
-            "UPDATE Tasks SET time = ?, date = ?, end_date = ? WHERE name == ?",
+            "UPDATE Tasks SET time = ?, date = ?, end_date = ?, initial_time = ? WHERE name == ?",
             [
               timeSheet.time,
               timeSheet.startDate.value.toIso8601String(),
               timeSheet.endDate.value.toIso8601String(),
+              timeSheet.initialTime,
               timeSheet.name
             ])));
   }
@@ -54,21 +57,36 @@ class Storage {
   Future<Database> getDatabase() async {
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'demo.db');
-    return await openDatabase(path, version: 2,
+    return await openDatabase(path, version: 3,
+        onUpgrade: (db, oldVersion, newVersion) {
+          if (newVersion != 3) {
+            throw new UnsupportedError("This database is not now updateable to Version " + newVersion.toString());
+          }
+          switch (oldVersion) {
+            case 1:
+              db
+                  .transaction((tr) => tr.execute(
+                  "ALTER TABLE Tasks ADD end_date TEXT DEFAULT('" +
+                      DateTime.now().toIso8601String() +
+                      "')"))
+                  .then((v) => db.execute(
+                  'CREATE TABLE Tasks (name TEXT PRIMARY KEY, time REAL, date TEXT, end_date TEXT)'));
+              continue secondVersionUpdate;
+            secondVersionUpdate:
+            case 2:
+              db.transaction((tr) =>
+                  tr.execute("ALTER TABLE Tasks ADD initial_time REAL DEFAULT(0)"))
+                    .then((v) => db.execute(
+                    'CREATE TABLE Tasks (name TEXT PRIMARY KEY, time REAL, date TEXT, end_date TEXT, initial_time REAL)'))
+              .then((v) => db.execute("UPDATE Tasks SET initial_time = time"));
+              break;
+            default:
+              break;
+          }
+        },
         onCreate: (Database db, int version) async {
-      if (version == 1) {
-        db
-            .transaction((tr) => tr.execute(
-                "ALTER TABLE Tasks ADD end_date TEXT DEFAULT('" +
-                    DateTime.now().toIso8601String() +
-                    "')"))
-            .then((v) => db.execute(
-                'CREATE TABLE Tasks (name TEXT PRIMARY KEY, time REAL, date TEXT, end_date TEXT)'));
-      } else {
-        await db.execute(
-            'CREATE TABLE Tasks (name TEXT PRIMARY KEY, time REAL, date TEXT, end_date TEXT)');
-      }
-    });
+          db.execute('CREATE TABLE Tasks (name TEXT PRIMARY KEY, time REAL, date TEXT, end_date TEXT, initial_time REAL)');
+        });
   }
 
   List<TimeSheetData> transform(List<Map<String, dynamic>> list) {
@@ -83,7 +101,10 @@ class Storage {
       var startDate = Optional.ofNullable(DateTime.parse(iterator.current));
       iterator.moveNext();
       var endDate = Optional.ofNullable(DateTime.parse(iterator.current));
-      var timeSheetData = TimeSheetData.from(time, name, startDate, endDate);
+      iterator.moveNext();
+      var initialTime = iterator.current;
+      var timeSheetData =
+          TimeSheetData.from(time, name, startDate, endDate, initialTime);
       timeSheets.add(timeSheetData);
     }
     return timeSheets;

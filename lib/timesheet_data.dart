@@ -3,18 +3,11 @@ import 'package:optional/optional_internal.dart';
 class TimeSheetData extends Comparable<TimeSheetData>{
   double time;
   String name;
+  double initialTime;
   Optional<DateTime> startDate;
   Optional<DateTime> endDate;
 
-  TimeSheetData(String input) {
-    var atoms = input.split("\n");
-    var dateParts = atoms.elementAt(2).split("-");
-    startDate = Optional.ofNullable(DateTime(int.parse(dateParts.elementAt(0)), int.parse(dateParts.elementAt(1)), int.parse(dateParts.elementAt(2))));
-    time = double.parse(atoms.elementAt(0));
-    name = atoms.elementAt(1);
-  }
-
-  TimeSheetData.from(this.time, this.name, this.startDate, this.endDate);
+  TimeSheetData.from(this.time, this.name, this.startDate, this.endDate, this.initialTime);
 
   @override
   bool operator ==(Object other) =>
@@ -36,7 +29,9 @@ class TimeSheetData extends Comparable<TimeSheetData>{
     return startDate.isPresent;
   }
 
-  String get title => name + ": " + ((time * 100).round() / 100).toString();
+  String get title => name + ": " + timeFormatted + " done: " + done;
+
+  String get done => ((((initialTime-time) / initialTime) * 100).roundToDouble()).toString() + " %";
 
   String get formattedDate =>
       startDate.isPresent?"${startDate.value.year.toString()}-"
@@ -55,7 +50,7 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   }
 
   void decrement(double value) {
-    this.time -= value;
+    this.initialTime -= value;
   }
 
   @override
