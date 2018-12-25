@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/overview/overview.dart';
+import 'package:flutter_app/overview/overview_controller.dart';
 import 'package:flutter_app/overview/overview_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -15,7 +16,8 @@ void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     OverviewModel overviewModel = OverviewModel(null);
-    await tester.pumpWidget(Overview(overviewModel, null, null,null));
+    OverviewController overviewController = OverviewController();
+    await tester.pumpWidget(overviewController.view);
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
