@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app/appointment/appointment_controller.dart';
 import 'package:flutter_app/data_service.dart';
+import 'package:flutter_app/data_service_impl.dart';
 import 'package:flutter_app/overview/overview.dart';
 import 'package:flutter_app/overview/overview_model.dart';
 import 'package:flutter_app/timesheet_data.dart';
 import 'package:optional/optional_internal.dart';
 
-void main() => OverviewController();
+void main() => OverviewController(DataServiceImpl());
 
 class OverviewController {
 
@@ -14,8 +15,8 @@ class OverviewController {
   Overview view;
   DataService dataService;
 
-  OverviewController() {
-    dataService = DataService();
+  OverviewController(DataService dataService) {
+    dataService = dataService;
     model = OverviewModel(dataService.getTimeSheetData());
     view = Overview(model,
       performClickOnTimeSheet: (TimeSheetData timeSheet) {

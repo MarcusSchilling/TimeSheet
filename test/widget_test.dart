@@ -6,6 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/data_service_impl.dart';
 import 'package:flutter_app/overview/overview.dart';
 import 'package:flutter_app/overview/overview_controller.dart';
 import 'package:flutter_app/overview/overview_model.dart';
@@ -16,7 +17,7 @@ void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     OverviewModel overviewModel = OverviewModel(null);
-    OverviewController overviewController = OverviewController();
+    OverviewController overviewController = OverviewController(DataServiceImpl());
     await tester.pumpWidget(overviewController.view);
 
     // Verify that our counter starts at 0.
