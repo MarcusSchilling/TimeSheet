@@ -9,24 +9,20 @@ import 'package:optional/optional_internal.dart';
 
 typedef void ChangeTimeSheet();
 typedef void PerformClickOnTimeSheet(TimeSheetData timeSheetData);
-typedef void PerformDelete(TimeSheetData timeSheetData);
 
 class Overview extends StatelessWidget {
 
   OverviewModel model;
   ChangeTimeSheet changeTimeSheet;
   PerformClickOnTimeSheet performClickOnTimeSheet;
-  PerformDelete performDelete;
 
   Overview(
       this.model,
       {ChangeTimeSheet changeTimeSheet,
-      PerformClickOnTimeSheet performClickOnTimeSheet,
-      PerformDelete performDelete}){
+      PerformClickOnTimeSheet performClickOnTimeSheet}){
     this.model = model;
     this.changeTimeSheet = changeTimeSheet;
     this.performClickOnTimeSheet = performClickOnTimeSheet;
-    this.performDelete = performDelete;
   }
 
   // This widget is the root of your application.
@@ -50,7 +46,6 @@ class Overview extends StatelessWidget {
       home: OverviewPage(model,
           changeTimeSheet: changeTimeSheet,
           performClickOnTimeSheet: performClickOnTimeSheet,
-          performDelete: performDelete,
           title: 'LearningtimeSheet'),
     );
   }
@@ -62,18 +57,15 @@ class OverviewPage extends StatefulWidget {
   OverviewModel model;
   ChangeTimeSheet changeTimeSheet;
   PerformClickOnTimeSheet performClickOnTimeSheet;
-  PerformDelete performDelete;
 
   OverviewPage(this.model,
       {ChangeTimeSheet changeTimeSheet,
       PerformClickOnTimeSheet performClickOnTimeSheet,
-      PerformDelete performDelete,
       Key key,
       this.title}) : super(key: key) {
     this.model = model;
     this.changeTimeSheet = changeTimeSheet;
     this.performClickOnTimeSheet = performClickOnTimeSheet;
-    this.performDelete = performDelete;
   }
 
   // This widget is the home page of your applic  key);ation. It is stateful, meaning
@@ -91,30 +83,27 @@ class OverviewPage extends StatefulWidget {
   OverviewState createState() => OverviewState(
       model,
       changeTimeSheet: changeTimeSheet,
-      performClickOnTimeSheet: performClickOnTimeSheet,
-      performDelete: performDelete);
+      performClickOnTimeSheet: performClickOnTimeSheet);
 }
 
 class OverviewState extends State<OverviewPage> {
   bool loading = true;
 
   List<_MyRowItem> myRowItems;
+  ListView listView;
   OverviewModel model;
   var changeTimeSheet;
-  var performClickOnTimeSheet;
-  var performDelete;
+  PerformClickOnTimeSheet performClickOnTimeSheet;
 
   OverviewState(
         OverviewModel model,
         {ChangeTimeSheet changeTimeSheet,
-        PerformClickOnTimeSheet performClickOnTimeSheet,
-        PerformDelete performDelete}) {
+        PerformClickOnTimeSheet performClickOnTimeSheet}) {
     this.model = model;
     myRowItems = List();
     model.register(updateView);
     this.changeTimeSheet = changeTimeSheet;
     this.performClickOnTimeSheet = performClickOnTimeSheet;
-    this.performDelete = performDelete;
   }
 
   void updateAll(Optional<TimeSheetData> timeSheet) {
@@ -123,6 +112,7 @@ class OverviewState extends State<OverviewPage> {
   }
 
   void updateView(List<TimeSheetData> timeSheets) {
+    loading = true;
     myRowItems.clear();
     for (var value in timeSheets) {
       myRowItems.add(new _MyRowItem(value, performClickOnTimeSheet));
@@ -140,15 +130,10 @@ class OverviewState extends State<OverviewPage> {
 // The Flutter framework has been optimized to make rerunning build methods
 // fast, so that you can just rebuild anything that needs updating rather
 // than having to individually change instances of widgets.
-    var list = ListView.builder(
+    listView = ListView.builder(
       itemBuilder: (context, index) {
-        return GestureDetector(
-          child: myRowItems.elementAt(index),
-          onTap: () {
-            updateAll(Optional.of(myRowItems.elementAt(index).timeSheet));
-          },
-          onHorizontalDragEnd: (a) => performDelete(myRowItems.elementAt(index).timeSheet),
-        );
+        return GestureDetector(child: myRowItems.elementAt(index),
+        onTap: () => updateAll(Optional.of(myRowItems.elementAt(index).timeSheet)),);
       },
       itemCount: loading ? 0 : myRowItems.length,
     );
@@ -158,7 +143,7 @@ class OverviewState extends State<OverviewPage> {
 // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: list,
+      body: listView,
       // This trailing comma makes auto-formatting nicer for build methods.
       floatingActionButton: FloatingActionButton(
           onPressed: () => updateAll(Optional.empty()),
@@ -171,9 +156,9 @@ class OverviewState extends State<OverviewPage> {
 
 class _MyRowItemState extends State<_MyRowItem> {
   TimeSheetData timeSheet;
-  var performClickOnTimeSheet;
+  PerformClickOnTimeSheet performClickOnTimeSheet;
 
-  _MyRowItemState(TimeSheetData timeSheet, void performClickOnTimeSheet(TimeSheetData timeSheet)) {
+  _MyRowItemState(TimeSheetData timeSheet, PerformClickOnTimeSheet performClickOnTimeSheet) {
     this.timeSheet = timeSheet;
     this.performClickOnTimeSheet = performClickOnTimeSheet;
   }
@@ -202,11 +187,9 @@ class _MyRowItemState extends State<_MyRowItem> {
 
 class _MyRowItem extends StatefulWidget {
   final TimeSheetData timeSheet;
-  var performClickOnTimeSheet;
+  PerformClickOnTimeSheet performClickOnTimeSheet;
 
-  _MyRowItem(this.timeSheet, void performClickOnTimeSheet(TimeSheetData timeSheetData)) {
-    this.performClickOnTimeSheet = performClickOnTimeSheet;
-  }
+  _MyRowItem(this.timeSheet, this.performClickOnTimeSheet);
 
   @override
   State<StatefulWidget> createState() {

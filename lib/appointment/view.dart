@@ -8,6 +8,8 @@ import 'package:flutter_app/timesheet_data.dart';
 import 'package:intl/intl.dart';
 import 'package:optional/optional_internal.dart';
 
+typedef void DeleteTimeSheet();
+typedef Future<bool> Exit();
 
 
 class AppointmentView extends StatelessWidget {
@@ -15,15 +17,14 @@ class AppointmentView extends StatelessWidget {
   VoidCallback save;
   MyAppointmentView view;
   AppointmentModel model;
-  var exit;
+  Exit exit;
+  DeleteTimeSheet deleteTimeSheet;
 
-  AppointmentView(this.save, this.model, Future<bool> exit()) {
-    this.exit = exit;
-  }
+  AppointmentView(this.save, this.model, this.exit, this.deleteTimeSheet);
 
   @override
   Widget build(BuildContext context) {
-    view = MyAppointmentView(model, save, exit ,title: "Appointment");
+    view = MyAppointmentView(model, save, exit, deleteTimeSheet ,title: "Appointment");
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Appointment",
@@ -38,25 +39,35 @@ class AppointmentView extends StatelessWidget {
     view.error(errorMessage);
   }
 
+  Future<bool> checkIfUserIsSure(String message) {
+    return view.checkIfUserWantsAction(message);
+  }
+
 }
 
 class MyAppointmentView extends StatefulWidget {
-  MyAppointmentView(this.model, this.save, this.exit , {Key key, title}) : super(key: key);
+  MyAppointmentView(this.model, this.save, this.exit, this.delete , {Key key, title}) : super(key: key);
 
   AppointmentModel model;
   VoidCallback save;
   _MyAppointmentViewState viewState;
-  var exit;
+  Exit exit;
+  DeleteTimeSheet delete;
 
   @override
   _MyAppointmentViewState createState() {
-    viewState = _MyAppointmentViewState(this.model, this.save, this.exit);
+    viewState = _MyAppointmentViewState(this.model, this.save, this.exit, this.delete);
     return viewState;
   }
 
   void error(String errorMessage) {
     viewState.error(errorMessage);
   }
+
+  Future<bool> checkIfUserWantsAction(String message) {
+    return viewState.checkIfUserWantsAction(message);
+  }
+
 
 
 }
@@ -70,9 +81,12 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   VoidCallback save;
   AppointmentModel model;
   BuildContext context;
-  var exit;
+  Exit exit;
+  DeleteTimeSheet delete;
 
-  _MyAppointmentViewState(this.model, this.save, this.exit);
+
+
+  _MyAppointmentViewState(this.model, this.save, this.exit, this.delete);
 
 
   Future<bool> _onWillPop() {
@@ -84,7 +98,8 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     var listView = ListView(children: <Widget>[
         nameRow(),
         timeRow(),
-        dateFormatRow()
+        dateFormatRow(),
+        deleteButton()
       ],
         // This trailing comma makes auto-formatting nicer for build methods.
       );
@@ -109,6 +124,13 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     );
     return new WillPopScope(child: scaffold, onWillPop: _onWillPop);
   }
+
+  RaisedButton deleteButton() {
+    return RaisedButton(onPressed: delete,
+        child: Text("Delete")
+    );
+  }
+
 
   Row nameRow() {
     Text name = Text("Name: ", textAlign: TextAlign.left);
@@ -224,6 +246,30 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     Scaffold.of(this.context).showSnackBar(new SnackBar(
       content: new Text(errorMessage),
     ));
+  }
+
+  Future<bool> checkIfUserWantsAction(String message) {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(message),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Regret'),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            FlatButton(
+              child: Text('Do it!'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
 }

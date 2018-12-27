@@ -13,7 +13,7 @@ class OverviewModel {
     timeSheets
         .then((loadedTimeSheets){
           this.timeSheets = loadedTimeSheets;
-          updateAll(loadedTimeSheets);
+          updateAll();
         });
     selectedTimeSheet = Optional.empty();
   }
@@ -22,21 +22,18 @@ class OverviewModel {
     this.updateView = updateView;
   }
 
-  void updateAll(List<TimeSheetData> timeSheet) {
-    timeSheet.sort();
-    updateView(timeSheet);
+  void updateAll() {
+    timeSheets.sort();
+    updateView(timeSheets);
   }
 
   void selectTimeSheet(Optional<TimeSheetData> optionalSelectedTimeSheet) {
     this.selectedTimeSheet = optionalSelectedTimeSheet;
   }
 
-  void update() {
-    updateAll(timeSheets);
-  }
 
   void delete(TimeSheetData toDelete) {
-    timeSheets
+      timeSheets
         .removeWhere((timeSheet) => timeSheet == toDelete);
   }
 

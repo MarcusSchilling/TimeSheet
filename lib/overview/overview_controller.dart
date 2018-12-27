@@ -22,7 +22,7 @@ class OverviewController {
       performClickOnTimeSheet: (TimeSheetData timeSheet) {
         timeSheet.decrement(0.25);
         dataService.update(timeSheet);
-        model.update();
+        model.updateAll();
         return;
       },
       changeTimeSheet: () {
@@ -31,12 +31,6 @@ class OverviewController {
         } else {
           newTimeSheetData();
         }
-      },
-      performDelete: (TimeSheetData toDelete) {
-        dataService.remove(toDelete);
-        model.delete(toDelete);
-        model.update();
-        return;
       },
     );
     runApp(view);

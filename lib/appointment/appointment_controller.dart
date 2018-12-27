@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app/appointment/model.dart';
 import 'package:flutter_app/appointment/view.dart';
@@ -8,7 +6,7 @@ import 'package:flutter_app/overview/overview_controller.dart';
 import 'package:flutter_app/timesheet_data.dart';
 import 'package:optional/optional_internal.dart';
 
-class AppointmentController{
+class AppointmentController {
 
   AppointmentView view;
   AppointmentModel model;
@@ -16,7 +14,11 @@ class AppointmentController{
 
   AppointmentController(Optional<TimeSheetData> timeSheet) {
     model = AppointmentModel.of(timeSheet);
-    view = AppointmentView(timeSheet.isPresent ? update : save, model, exit);
+    view = AppointmentView(timeSheet.isPresent ? update : save,
+        model,
+        exit,
+        delete
+    );
     dataService = DataServiceImpl();
   }
 
@@ -31,6 +33,23 @@ class AppointmentController{
     } else {
       view.error("The Input is not valid");
     }
+  }
+
+  void delete() {
+    dataService.exists(model.getTimeSheet()).then((exists) {
+      if (exists) {
+        view.checkIfUserIsSure("Do you realy want to delete the TimeSheet?")
+        .then((sure) {
+          if (sure) {
+            dataService.remove(model.getTimeSheet()).then((v) => exit());
+          }
+        });
+      } else {
+        view.error("There is no TimeSheet stored with the name:" + model
+            .getTimeSheet()
+            .name);
+      }
+    });
   }
 
   void update() {
