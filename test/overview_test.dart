@@ -15,6 +15,8 @@ import 'package:flutter_app/timesheet_data.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:optional/optional_internal.dart';
 
+import 'mock_extensions/MockDataService.dart';
+
 
 void main() {
 
@@ -61,7 +63,7 @@ void main() {
     expect(find.text(timeSheetData.title), findsOneWidget);
   });
 
-  testWidgets('test finished', (WidgetTester tester) async {
+  testWidgets('test finished appointment doesnt have an icon for incrementing time after initial time is done', (WidgetTester tester) async {
     var mockDataService = MockDataService();
     var timeSheetData = TimeSheetData.from(0, "WASA",
         Optional.of(DateTime.now()),
@@ -82,58 +84,22 @@ void main() {
     expect(find.byKey(Key("increment_button")), findsNothing);
 
   });
-}
 
-class MockDataService implements DataService {
+  testWidgets('test finished appointment doesnt have an icon for incrementing time after end date passed', (WidgetTester tester) async {
+    var mockDataService = MockDataService();
+    var timeSheetData = TimeSheetData.from(0, "WASA",
+        Optional.of(DateTime.now().add(Duration(days: -12))),
+        Optional.of(DateTime.now().add(Duration(days: -10))),
+        TimeSheetData.stepsTimeDone);
+    mockDataService.store(timeSheetData);
+    OverviewController overviewController = OverviewController(mockDataService);
+    await tester.pumpWidget(overviewController.view);
+    //tap time done
 
-  List<TimeSheetData> timeSheets = List();
+    expect(find.text(timeSheetData.title), findsOneWidget);
+    expect(find.byKey(Key("increment_button")), findsNothing);
 
-  @override
-  Future<bool> exists(TimeSheetData timeSheet) async {
-    return timeSheets.contains(timeSheet);
-  }
-
-  @override
-  Future<List<TimeSheetData>> getTimeSheetData() async {
-    return timeSheets;
-  }
-
-  @override
-  Future<void> remove(TimeSheetData toDelete) async {
-    return timeSheets.remove(toDelete);
-  }
-
-  @override
-  Future<void> store(TimeSheetData timeSheet) async{
-    exists(timeSheet).then((exist) {
-      if (!exist) {
-        this.timeSheets.add(timeSheet);
-      } else {
-        throw new AssertionError("You cannot store an time sheet that exists you have to update such a timesheet");
-      }
-    });
-  }
-
-  @override
-  Future<void> replace(TimeSheetData timeSheet, TimeSheetData oldTimeSheet) async {
-    timeSheets.remove(oldTimeSheet);
-    timeSheets.add(timeSheet);
-  }
-
-  @override
-  Future<void> update(TimeSheetData timeSheet) async{
-    exists(timeSheet).then((exist) {
-      if (exist) {
-        var timeSheetWhichShouldBeUpdated = this.timeSheets.firstWhere((e) => timeSheet.name == e.name);
-        timeSheetWhichShouldBeUpdated.endDate = timeSheet.endDate;
-        timeSheetWhichShouldBeUpdated.startDate = timeSheet.startDate;
-        timeSheetWhichShouldBeUpdated.endDate = timeSheet.endDate;
-        timeSheetWhichShouldBeUpdated.initialTime = timeSheet.initialTime;
-        timeSheetWhichShouldBeUpdated.timeDone = timeSheet.timeDone;
-      } else {
-        throw new AssertionError("You cannot update a time sheet that doesn't exist");
-      }
-    });
-  }
+  });
 
 }
+

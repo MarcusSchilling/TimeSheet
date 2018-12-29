@@ -85,6 +85,7 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   }
 
   bool finished() {
-    return remainingTime <= 0;
+    return remainingTime <= 0
+        || (endDate.isPresent && endDate.value.compareTo(DateTime.now()) <= 0);
   }
 }
