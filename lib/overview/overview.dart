@@ -6,6 +6,7 @@ import 'package:flutter_app/overview/overview_controller.dart';
 import 'package:flutter_app/overview/overview_model.dart';
 import 'package:flutter_app/timesheet_data.dart';
 import 'package:optional/optional_internal.dart';
+import 'package:flutter_app/constants.dart';
 
 typedef void ChangeTimeSheet();
 typedef void PerformClickOnTimeSheet(TimeSheetData timeSheetData);
@@ -133,11 +134,13 @@ class OverviewState extends State<OverviewPage> {
     listView = ListView.builder(
       itemBuilder: (context, index) {
         return GestureDetector(child: myRowItems.elementAt(index),
+        key: Constants.listElementKey,
         onTap: () => updateAll(Optional.of(myRowItems.elementAt(index).timeSheet)),);
       },
       itemCount: loading ? 0 : myRowItems.length,
     );
     return Scaffold(
+      key: Constants.overviewScaffoldKey,
       appBar: AppBar(
 // Here we take the value from the MyHomePage object that was created by
 // the App.build method, and use it to set our appbar title.
@@ -147,6 +150,7 @@ class OverviewState extends State<OverviewPage> {
       // This trailing comma makes auto-formatting nicer for build methods.
       floatingActionButton: FloatingActionButton(
           onPressed: () => updateAll(Optional.empty()),
+          key: Constants.newAppointmentButtonKey,
       child: Icon(Icons.add),
     ), // This trailing comma makes auto-formatting nicer for build methods.
     );
@@ -172,7 +176,7 @@ class _MyRowItemState extends State<_MyRowItem> {
     var incrementTimeDoneButton = timeSheet.finished() ? null :
     IconButton(onPressed: click,
         icon: Icon(Icons.add),
-        key: Key("increment_button"),
+        key: Constants.incrementButtonKey,
     );
     if (timeSheet.hasDate()) {
       return ListTile(

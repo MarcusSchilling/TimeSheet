@@ -2,6 +2,7 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/appointment/model.dart';
+import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/timesheet_data.dart';
 import 'package:intl/intl.dart';
 import 'package:optional/optional_internal.dart';
@@ -98,7 +99,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
       // This trailing comma makes auto-formatting nicer for build methods.
     );
     Scaffold scaffold = new Scaffold(
-        key: Key("Scaffold"),
+        key: Constants.appointmentScaffoldKey,
         appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.

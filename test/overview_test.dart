@@ -6,6 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/data_service.dart';
 import 'package:flutter_app/data_service_impl.dart';
 import 'package:flutter_app/overview/overview.dart';
@@ -17,15 +18,16 @@ import 'package:optional/optional_internal.dart';
 
 import 'mock_extensions/MockDataService.dart';
 
-
 void main() {
 
+  var timeNow = Optional.of(DateTime.now());
+  var endTime = Optional.of(DateTime.now().add(Duration(days: 10)));
   testWidgets('widget is showed correct', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    var mockDataService = MockDataService();
+    MockDataService mockDataService = MockDataService();
     var timeSheetData = TimeSheetData.from(0, "WASA",
-        Optional.of(DateTime.now()),
-        Optional.of(DateTime.now().add(Duration(days: 10))),
+        timeNow,
+        endTime,
         40);
     mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
@@ -44,10 +46,10 @@ void main() {
   });
 
   testWidgets('test increment time done', (WidgetTester tester) async {
-    var mockDataService = MockDataService();
+    MockDataService mockDataService = MockDataService();
     var timeSheetData = TimeSheetData.from(0, "WASA",
-        Optional.of(DateTime.now()),
-        Optional.of(DateTime.now().add(Duration(days: 10))),
+        timeNow,
+        endTime,
         40);
     mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
@@ -56,18 +58,27 @@ void main() {
     var oldTitle = timeSheetData.title;
 
     //tap time done
-    await tester.tap(find.byKey(Key("increment_button")));
+    await tester.tap(find.byKey(Constants.incrementButtonKey));
     await tester.pump();
 
     expect(find.text(oldTitle), findsNothing);
     expect(find.text(timeSheetData.title), findsOneWidget);
+
+    TimeSheetData expected = TimeSheetData.from(
+        TimeSheetData.stepsTimeDone,
+        "WASA",
+        timeNow,
+        endTime,
+        40);
+    var result = mockDataService.timeSheets.first;
+    expect(result, expected);
   });
 
   testWidgets('test finished appointment doesnt have an icon for incrementing time after initial time is done', (WidgetTester tester) async {
-    var mockDataService = MockDataService();
+    MockDataService mockDataService = MockDataService();
     var timeSheetData = TimeSheetData.from(0, "WASA",
-        Optional.of(DateTime.now()),
-        Optional.of(DateTime.now().add(Duration(days: 10))),
+        timeNow,
+        endTime,
         TimeSheetData.stepsTimeDone);
     mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
@@ -76,17 +87,19 @@ void main() {
 
     var oldTitle = timeSheetData.title;
 
-    await tester.tap(find.byKey(Key("increment_button")));
+    await tester.tap(find.byKey(Constants.incrementButtonKey));
     await tester.pump();
 
     expect(find.text(timeSheetData.title), findsOneWidget);
     expect(find.text(oldTitle), findsNothing);
-    expect(find.byKey(Key("increment_button")), findsNothing);
-
+    expect(find.byKey(Constants.incrementButtonKey), findsNothing);
+    TimeSheetData expected = TimeSheetData.from(TimeSheetData.stepsTimeDone, "WASA", timeNow, endTime, TimeSheetData.stepsTimeDone);
+    var result = mockDataService.timeSheets.first;
+    expect(result, expected);
   });
 
   testWidgets('test finished appointment doesnt have an icon for incrementing time after end date passed', (WidgetTester tester) async {
-    var mockDataService = MockDataService();
+    MockDataService mockDataService = MockDataService();
     var timeSheetData = TimeSheetData.from(0, "WASA",
         Optional.of(DateTime.now().add(Duration(days: -12))),
         Optional.of(DateTime.now().add(Duration(days: -10))),
@@ -97,9 +110,78 @@ void main() {
     //tap time done
 
     expect(find.text(timeSheetData.title), findsOneWidget);
-    expect(find.byKey(Key("increment_button")), findsNothing);
+    expect(find.byKey(Constants.incrementButtonKey), findsNothing);
 
+    List list = List();
+    list.add(timeSheetData);
+    expect(mockDataService.timeSheets, list);
   });
+
+  testWidgets('test move to other activity after clicking button which creates new Appointment', (WidgetTester tester) async {
+    MockDataService mockDataService = MockDataService();
+    var timeSheetData = TimeSheetData.from(0, "WASA",
+        timeNow,
+        endTime,
+        TimeSheetData.stepsTimeDone);
+    mockDataService.store(timeSheetData);
+    OverviewController overviewController = OverviewController(mockDataService);
+    await tester.pumpWidget(overviewController.view);
+    //tap time done
+
+    expect(find.text(timeSheetData.title), findsOneWidget);
+    expect(find.text(timeSheetData.title + " sodale"), findsNothing);
+
+    expect(find.text(timeSheetData.formattedDate), findsOneWidget);
+    expect(find.byKey(Constants.overviewScaffoldKey), findsOneWidget);
+
+    await tester.tap(find.byKey(Constants.newAppointmentButtonKey));
+    await tester.pump();
+    expect(find.text(timeSheetData.title), findsNothing);
+    expect(find.byKey(Constants.overviewScaffoldKey), findsNothing);
+    expect(find.byKey(Constants.appointmentScaffoldKey), findsOneWidget);
+    List list = List();
+    list.add(timeSheetData);
+    expect(mockDataService.timeSheets, list);
+  });
+
+  testWidgets('test move to other activity after clicking timesheet', (WidgetTester tester) async {
+    MockDataService mockDataService = MockDataService();
+    var timeSheetData = TimeSheetData.from(0, "WASA",
+        timeNow,
+        endTime,
+        TimeSheetData.stepsTimeDone);
+    mockDataService.store(timeSheetData);
+    OverviewController overviewController = OverviewController(mockDataService);
+    await tester.pumpWidget(overviewController.view);
+
+    //tap time done
+    expect(find.text(timeSheetData.title), findsOneWidget);
+    expect(find.text(timeSheetData.title + " sodale"), findsNothing);
+
+    expect(find.text(timeSheetData.formattedDate), findsOneWidget);
+    expect(find.byKey(Constants.overviewScaffoldKey), findsOneWidget);
+
+    await tester.tap(find.byKey(Constants.listElementKey));
+    await tester.pump();
+    expect(find.text(timeSheetData.title), findsNothing);
+    expect(find.byKey(Constants.overviewScaffoldKey), findsNothing);
+    expect(find.byKey(Constants.appointmentScaffoldKey), findsOneWidget);
+    List list = List();
+    list.add(timeSheetData);
+    expect(mockDataService.timeSheets, list);
+  });
+
+  testWidgets('test correct text color of activity', (WidgetTester tester) async {
+    MockDataService mockDataService = MockDataService();
+    var timeSheetData = TimeSheetData.from(0, "WASA",
+        Optional.of(DateTime.now().add(Duration(days: -10))),
+        endTime,
+        100);
+    mockDataService.store(timeSheetData);
+    OverviewController overviewController = OverviewController(mockDataService);
+    await tester.pumpWidget(overviewController.view);
+  });
+  //TODO test coloring of list items
 
 }
 
