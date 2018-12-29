@@ -17,7 +17,7 @@ class Storage {
             "INSERT INTO Tasks(name, time, date, end_date, initial_time) VALUES(?,?,?,?,?)",
             [
               timeSheet.name,
-              timeSheet.time,
+              timeSheet.remainingTime,
               timeSheet.hasDate() ? timeSheet.startDate.value.toIso8601String() : null,
               timeSheet.hasEndDate() ? timeSheet.endDate.value.toIso8601String() : null,
               timeSheet.initialTime
@@ -28,7 +28,7 @@ class Storage {
     return database.then((db) => db.transaction((tr) => tr.execute(
             "UPDATE Tasks SET time = ?, date = ?, end_date = ?, initial_time = ? WHERE name == ?",
             [
-              timeSheet.time,
+              timeSheet.remainingTime,
               timeSheet.hasDate() ? timeSheet.startDate.value.toIso8601String() : null,
               timeSheet.hasEndDate() ? timeSheet.endDate.value.toIso8601String() : null,
               timeSheet.initialTime,

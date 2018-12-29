@@ -172,14 +172,16 @@ class _MyRowItemState extends State<_MyRowItem> {
     if (timeSheet.hasDate()) {
       return ListTile(
           title: Text(timeSheet.title,
-              textDirection: TextDirection.ltr, textAlign: TextAlign.left),
+              textDirection: TextDirection.ltr, textAlign: TextAlign.left,
+          style: TextStyle(color: timeSheet.progress()),),
           trailing:
           IconButton(onPressed: click, icon: Icon(Icons.add)),
           leading: Text(timeSheet.formattedDate));
     }
     return ListTile(
         title: Text(timeSheet.title,
-            textDirection: TextDirection.ltr, textAlign: TextAlign.left),
+            textDirection: TextDirection.ltr, textAlign: TextAlign.left,
+        style: TextStyle(color: timeSheet.progress())),
         trailing:
         IconButton(onPressed: click, icon: Icon(Icons.add)));
   }

@@ -10,7 +10,7 @@ class AppointmentModel {
   AppointmentModel.of(Optional<TimeSheetData> timeSheet) {
     this.timeSheetData = timeSheet.isPresent ? timeSheet.value : TimeSheetData.from(null, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null);
     this.updatedOrNewTimeSheetData = timeSheet.isPresent
-    ? TimeSheetData.from(timeSheet.value.time, timeSheet.value.name, timeSheet.value.startDate, timeSheet.value.endDate, timeSheet.value.initialTime):
+    ? TimeSheetData.from(timeSheet.value.remainingTime, timeSheet.value.name, timeSheet.value.startDate, timeSheet.value.endDate, timeSheet.value.initialTime):
     TimeSheetData.from(null, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null);
   }
 
@@ -19,7 +19,7 @@ class AppointmentModel {
   }
 
   void updateTime(double time) {
-    updatedOrNewTimeSheetData.time = time;
+    updatedOrNewTimeSheetData.remainingTime = time;
     updatedOrNewTimeSheetData.initialTime = time;
   }
 
@@ -32,7 +32,7 @@ class AppointmentModel {
   }
 
   bool hasName() => timeSheetData.name != null;
-  bool hasTime() => timeSheetData.time != null;
+  bool hasTime() => timeSheetData.remainingTime != null;
   bool hasEndDate() => timeSheetData.endDate != null && timeSheetData.endDate.isPresent;
 
   TimeSheetData getOldTimeSheet() {

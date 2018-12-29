@@ -83,7 +83,7 @@ class MockDataService implements DataService {
         timeSheetWhichShouldBeUpdated.startDate = timeSheet.startDate;
         timeSheetWhichShouldBeUpdated.endDate = timeSheet.endDate;
         timeSheetWhichShouldBeUpdated.initialTime = timeSheet.initialTime;
-        timeSheetWhichShouldBeUpdated.time = timeSheet.time;
+        timeSheetWhichShouldBeUpdated.remainingTime = timeSheet.remainingTime;
       } else {
         throw new AssertionError("You cannot update a time sheet that doesn't exist");
       }
