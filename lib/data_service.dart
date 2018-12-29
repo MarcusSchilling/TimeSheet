@@ -9,6 +9,8 @@ abstract class DataService {
 
     Future<void> update(TimeSheetData timeSheet);
 
+    Future<void> replace(TimeSheetData timeSheet, TimeSheetData oldTimeSheet);
+
     Future<bool> exists(TimeSheetData timeSheet);
 
     Future<void> remove(TimeSheetData toDelete);

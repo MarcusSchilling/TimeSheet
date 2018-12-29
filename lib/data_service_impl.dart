@@ -23,6 +23,10 @@ class DataServiceImpl implements DataService{
     return storage.updateTimeSheet(timeSheet);
   }
 
+  Future<void> replace(TimeSheetData oldTimeSheet, TimeSheetData timeSheet) {
+    return storage.delete(oldTimeSheet).then((v) => storage.writeCounter(timeSheet));
+  }
+
   Future<bool> exists(TimeSheetData timeSheet) {
     return storage.readCounter(timeSheet.name)
         .then((value) => true, onError: () => false);

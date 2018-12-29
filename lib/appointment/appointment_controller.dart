@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_app/appointment/model.dart';
 import 'package:flutter_app/appointment/view.dart';
 import 'package:flutter_app/data_service_impl.dart';
@@ -45,17 +44,15 @@ class AppointmentController {
           }
         });
       } else {
-        view.error("There is no TimeSheet stored with the name:" + model
-            .getTimeSheet()
-            .name);
+        view.error("There is no TimeSheet stored with the given values");
       }
     });
   }
 
   void update() {
     if (model.getTimeSheet().isValid()) {
-      dataService.update(model.getTimeSheet());
-      OverviewController(DataServiceImpl());
+      dataService.replace(model.getOldTimeSheet(), model.getTimeSheet())
+      .then((v) => OverviewController(DataServiceImpl()));
     } else {
       view.error("This input cannot be updated. It is not Valid.");
     }

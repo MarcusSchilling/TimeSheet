@@ -1,5 +1,3 @@
-
-
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +9,7 @@ import 'package:optional/optional_internal.dart';
 typedef void DeleteTimeSheet();
 typedef Future<bool> Exit();
 
-
 class AppointmentView extends StatelessWidget {
-
   VoidCallback save;
   MyAppointmentView view;
   AppointmentModel model;
@@ -24,7 +20,8 @@ class AppointmentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    view = MyAppointmentView(model, save, exit, deleteTimeSheet ,title: "Appointment");
+    view = MyAppointmentView(model, save, exit, deleteTimeSheet,
+        title: "Appointment");
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Appointment",
@@ -42,11 +39,12 @@ class AppointmentView extends StatelessWidget {
   Future<bool> checkIfUserIsSure(String message) {
     return view.checkIfUserWantsAction(message);
   }
-
 }
 
 class MyAppointmentView extends StatefulWidget {
-  MyAppointmentView(this.model, this.save, this.exit, this.delete , {Key key, title}) : super(key: key);
+  MyAppointmentView(this.model, this.save, this.exit, this.delete,
+      {Key key, title})
+      : super(key: key);
 
   AppointmentModel model;
   VoidCallback save;
@@ -56,7 +54,8 @@ class MyAppointmentView extends StatefulWidget {
 
   @override
   _MyAppointmentViewState createState() {
-    viewState = _MyAppointmentViewState(this.model, this.save, this.exit, this.delete);
+    viewState =
+        _MyAppointmentViewState(this.model, this.save, this.exit, this.delete);
     return viewState;
   }
 
@@ -67,13 +66,9 @@ class MyAppointmentView extends StatefulWidget {
   Future<bool> checkIfUserWantsAction(String message) {
     return viewState.checkIfUserWantsAction(message);
   }
-
-
-
 }
 
 class _MyAppointmentViewState extends State<MyAppointmentView> {
-
   TextField nameTF;
   TextField timeTF;
   TextEditingController nameEditingController = TextEditingController();
@@ -83,54 +78,63 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   BuildContext context;
   Exit exit;
   DeleteTimeSheet delete;
-
-
+  static const double edge = 10;
 
   _MyAppointmentViewState(this.model, this.save, this.exit, this.delete);
-
 
   Future<bool> _onWillPop() {
     return exit();
   }
 
-    @override
+  @override
   Widget build(BuildContext context) {
-    var listView = ListView(children: <Widget>[
+    var listView = ListView(
+      children: <Widget>[
         nameRow(),
         timeRow(),
         dateFormatRow(),
-        deleteButton()
+        deleteSaveRow()
       ],
-        // This trailing comma makes auto-formatting nicer for build methods.
-      );
-    Scaffold scaffold = new Scaffold(
-      key: Key("Scaffold"),
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text("Appointment"),
-      ),
-      body: new Builder(
-        builder: (BuildContext context) {
-          this.context = context;
-          return listView;
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: save,
-        child: Icon(Icons.add),
-      ),
-
+      // This trailing comma makes auto-formatting nicer for build methods.
     );
+    Scaffold scaffold = new Scaffold(
+        key: Key("Scaffold"),
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text("Appointment"),
+        ),
+        body: new Builder(
+          builder: (BuildContext context) {
+            this.context = context;
+            return listView;
+          },
+        ));
     return new WillPopScope(child: scaffold, onWillPop: _onWillPop);
   }
 
-  RaisedButton deleteButton() {
-    return RaisedButton(onPressed: delete,
-        child: Text("Delete")
-    );
+  Padding deleteSaveRow() {
+    return new Padding(
+        padding: EdgeInsets.only(left: edge, right: edge),
+        child: new Row(
+          children: <Widget>[
+            Flexible(child: deleteButton(), fit: FlexFit.tight),
+            SizedBox(width: 15),
+            Flexible(child: saveButton(), fit: FlexFit.tight)
+          ],
+          crossAxisAlignment: CrossAxisAlignment.start,
+        ));
   }
 
+  RaisedButton deleteButton() {
+    return RaisedButton(
+        onPressed: delete, padding: EdgeInsets.all(edge), child: Text("Löschen"));
+  }
+
+  RaisedButton saveButton() {
+    return RaisedButton(
+        onPressed: save, padding: EdgeInsets.all(edge), child: Text("Speichern"));
+  }
 
   Row nameRow() {
     Text name = Text("Name: ", textAlign: TextAlign.left);
@@ -144,7 +148,6 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
         ),
         onChanged: model.updateName,
       );
-
     } else {
       nameTF = TextField(
         controller: nameEditingController,
@@ -154,34 +157,32 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
         ),
         onChanged: model.updateName,
       );
-
     }
     return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: name,
-          ),
-          new Flexible(child: Container(
-            padding: const EdgeInsets.all(20),
-            child: nameTF,
-          ))
-        ],
-      );
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.all(edge),
+          child: name,
+        ),
+        new Flexible(
+            child: Container(
+          padding: const EdgeInsets.all(edge),
+          child: nameTF,
+        ))
+      ],
+    );
   }
-
 
   Row timeRow() {
     Text time = Text("Zeit: ", textAlign: TextAlign.left);
-    if(model.hasTime()){
-      timeTF =  TextField(
+    if (model.hasTime()) {
+      timeTF = TextField(
         controller: timeEditingController,
         decoration: InputDecoration(
             border: InputBorder.none,
             hintText: "Bitte Zeit der Aufgabe eingeben",
-            labelText: model.timeSheetData.timeFormatted
-        ),
+            labelText: model.timeSheetData.timeFormatted),
         keyboardType: TextInputType.number,
         onChanged: (value) => model.updateTime(double.parse(value)),
       );
@@ -189,8 +190,8 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
       timeTF = TextField(
         controller: timeEditingController,
         decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: "Bitte Zeit der Aufgabe eingeben",
+          border: InputBorder.none,
+          hintText: "Bitte Zeit der Aufgabe eingeben",
         ),
         keyboardType: TextInputType.number,
         onChanged: (value) => model.updateTime(double.parse(value)),
@@ -200,45 +201,41 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(edge),
           child: time,
         ),
-        new Flexible(child: Container(
-          padding: const EdgeInsets.all(20),
+        new Flexible(
+            child: Container(
+          padding: const EdgeInsets.all(edge),
           child: timeTF,
         ))
       ],
     );
-
   }
 
-  Row dateFormatRow() {
+  Padding dateFormatRow() {
     final dateFormatter = DateFormat("EEEE, MMMM d, yyyy 'at' h:mma");
     if (model.hasEndDate()) {
-      return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            new Flexible(child: DateTimePickerFormField(
-              format: dateFormatter,
-              decoration: InputDecoration(labelText: 'Date'),
-              onChanged: model.updateDate,
-              initialValue: model.timeSheetData.endDate.value,
-            ),
-            ),
-          ]
-      );
+      return new Padding(padding: EdgeInsets.only(left: edge, right: edge), child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        new Flexible(
+          child: DateTimePickerFormField(
+            format: dateFormatter,
+            decoration: InputDecoration(labelText: 'Date'),
+            onChanged: model.updateDate,
+            initialValue: model.timeSheetData.endDate.value,
+          ),
+        ),
+      ]));
     } else {
-      return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            new Flexible(child: DateTimePickerFormField(
-              format: dateFormatter,
-              decoration: InputDecoration(labelText: 'Date'),
-              onChanged: model.updateDate,
-            ),
-            ),
-          ]
-      );
+      return new Padding(padding: EdgeInsets.only(left: edge, right: edge), child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        new Flexible(
+          child: DateTimePickerFormField(
+            format: dateFormatter,
+            decoration: InputDecoration(labelText: 'Date'),
+            onChanged: model.updateDate,
+          ),
+        ),
+      ]));
     }
   }
 
@@ -271,5 +268,4 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
       },
     );
   }
-
 }
