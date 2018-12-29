@@ -1,0 +1,1 @@
+INSERT INTO Tasks(name, time, date, end_date, initial_time) Values("WASA", 90, "ASDa", "End_date", 100)

@@ -4,14 +4,14 @@ import 'package:optional/optional_internal.dart';
 
 class AppointmentModel {
 
-  TimeSheetData timeSheetData;
+  TimeSheetData oldTimeSheetData;
   TimeSheetData updatedOrNewTimeSheetData;
 
   AppointmentModel.of(Optional<TimeSheetData> timeSheet) {
-    this.timeSheetData = timeSheet.isPresent ? timeSheet.value : TimeSheetData.from(null, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null);
+    this.oldTimeSheetData = timeSheet.isPresent ? timeSheet.value : TimeSheetData.from(0, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null);
     this.updatedOrNewTimeSheetData = timeSheet.isPresent
-    ? TimeSheetData.from(timeSheet.value.remainingTime, timeSheet.value.name, timeSheet.value.startDate, timeSheet.value.endDate, timeSheet.value.initialTime):
-    TimeSheetData.from(null, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null);
+    ? TimeSheetData.from(timeSheet.value.timeDone, timeSheet.value.name, timeSheet.value.startDate, timeSheet.value.endDate, timeSheet.value.initialTime):
+    TimeSheetData.from(0, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null);
   }
 
   TimeSheetData getTimeSheet() {
@@ -19,7 +19,6 @@ class AppointmentModel {
   }
 
   void updateTime(double time) {
-    updatedOrNewTimeSheetData.remainingTime = time;
     updatedOrNewTimeSheetData.initialTime = time;
   }
 
@@ -31,12 +30,12 @@ class AppointmentModel {
     updatedOrNewTimeSheetData.name = name;
   }
 
-  bool hasName() => timeSheetData.name != null;
-  bool hasTime() => timeSheetData.remainingTime != null;
-  bool hasEndDate() => timeSheetData.endDate != null && timeSheetData.endDate.isPresent;
+  bool hasName() => oldTimeSheetData.name != null;
+  bool hasTime() => oldTimeSheetData.initialTime != null;
+  bool hasEndDate() => oldTimeSheetData.endDate != null && oldTimeSheetData.endDate.isPresent;
 
   TimeSheetData getOldTimeSheet() {
-    return timeSheetData;
+    return oldTimeSheetData;
   }
 
 }

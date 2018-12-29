@@ -13,14 +13,20 @@ import 'package:flutter_app/overview/overview_controller.dart';
 import 'package:flutter_app/overview/overview_model.dart';
 import 'package:flutter_app/timesheet_data.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:optional/optional_internal.dart';
 
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    OverviewModel overviewModel = OverviewModel(null);
-    OverviewController overviewController = OverviewController(MockDataService());
+    var mockDataService = MockDataService();
+    mockDataService.store(TimeSheetData.from(100, "WASA",
+        Optional.of(DateTime(2018, 12, 31)),
+        Optional.of(DateTime(2019, 12, 31)),
+        1000));
+    OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
+
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
@@ -78,12 +84,11 @@ class MockDataService implements DataService {
     exists(timeSheet).then((exist) {
       if (exist) {
         var timeSheetWhichShouldBeUpdated = this.timeSheets.firstWhere((e) => timeSheet.name == e.name);
-        timeSheetWhichShouldBeUpdated.name = timeSheet.name;
         timeSheetWhichShouldBeUpdated.endDate = timeSheet.endDate;
         timeSheetWhichShouldBeUpdated.startDate = timeSheet.startDate;
         timeSheetWhichShouldBeUpdated.endDate = timeSheet.endDate;
         timeSheetWhichShouldBeUpdated.initialTime = timeSheet.initialTime;
-        timeSheetWhichShouldBeUpdated.remainingTime = timeSheet.remainingTime;
+        timeSheetWhichShouldBeUpdated.timeDone = timeSheet.timeDone;
       } else {
         throw new AssertionError("You cannot update a time sheet that doesn't exist");
       }

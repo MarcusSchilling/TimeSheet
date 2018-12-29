@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:optional/optional_internal.dart';
 
 class TimeSheetData extends Comparable<TimeSheetData>{
-  double remainingTime;
+
+  double timeDone;
   String name;
   double initialTime;
   Optional<DateTime> startDate;
@@ -13,13 +14,13 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   // defines how much time you can be in delay and still being seen as in time.
   static const Duration acceptedTimeBuffer = Duration(hours: 3);
 
-  TimeSheetData.from(this.remainingTime, this.name, this.startDate, this.endDate, this.initialTime);
+  TimeSheetData.from(this.timeDone, this.name, this.startDate, this.endDate, this.initialTime);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
           other is TimeSheetData &&
-              remainingTime == other.remainingTime &&
+              timeDone == other.timeDone &&
               name == other.name &&
               startDate == other.startDate;
 
@@ -27,7 +28,7 @@ class TimeSheetData extends Comparable<TimeSheetData>{
 
   @override
   int get hashCode =>
-      remainingTime.hashCode ^
+      timeDone.hashCode ^
       name.hashCode ^
       startDate.hashCode;
 
@@ -47,30 +48,28 @@ class TimeSheetData extends Comparable<TimeSheetData>{
     }
   }
 
-  double get timeDone => initialTime - remainingTime;
+  String get title => name + ": " + initialTimeFormatted + " done: " + timeDone.toString();
 
-  String get title => name + ": " + timeFormatted + " done: " + done;
-
-  String get done => ((((initialTime-remainingTime) / initialTime) * 100).roundToDouble()).toString() + " %";
+  double get remainingTime => initialTime - timeDone;
 
   String get formattedDate =>
       endDate.isPresent?"${endDate.value.year.toString()}-"
           "${endDate.value.month.toString().padLeft(2, '0')}-"
           "${endDate.value.day.toString().padLeft(2, '0')}" : "";
 
-  String get timeFormatted => ((remainingTime * 100).round() / 100).toString();
+  String get initialTimeFormatted => ((initialTime * 100).round() / 100).toString();
 
   @override
   String toString() {
-    return timeFormatted + "\n" + name + "\n" + formattedDate + '\n';
+    return initialTimeFormatted + "\n" + name + "\n" + formattedDate + '\n';
   }
 
   bool isValid() {
-    return remainingTime != null && name != null && startDate != null;
+    return timeDone != null && initialTime != null && name != null && startDate != null;
   }
 
   void decrement(double value) {
-    this.remainingTime -= value;
+    this.timeDone += value;
   }
 
   @override

@@ -144,7 +144,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: "Bitte Namen der Aufgabe eingeben",
-          labelText: model.timeSheetData.name,
+          labelText: model.oldTimeSheetData.name,
         ),
         onChanged: model.updateName,
       );
@@ -182,7 +182,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
         decoration: InputDecoration(
             border: InputBorder.none,
             hintText: "Bitte Zeit der Aufgabe eingeben",
-            labelText: model.timeSheetData.timeFormatted),
+            labelText: model.oldTimeSheetData.initialTimeFormatted),
         keyboardType: TextInputType.number,
         onChanged: (value) => model.updateTime(double.parse(value)),
       );
@@ -222,7 +222,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
             format: dateFormatter,
             decoration: InputDecoration(labelText: 'Date'),
             onChanged: model.updateDate,
-            initialValue: model.timeSheetData.endDate.value,
+            initialValue: model.oldTimeSheetData.endDate.value,
           ),
         ),
       ]));
