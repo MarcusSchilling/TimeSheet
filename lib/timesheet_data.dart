@@ -11,6 +11,8 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   Optional<DateTime> startDate;
   Optional<DateTime> endDate;
 
+  static const double stepsTimeDone = 0.25;
+
   // defines how much time you can be in delay and still being seen as in time.
   static const Duration acceptedTimeBuffer = Duration(hours: 3);
 
@@ -68,8 +70,8 @@ class TimeSheetData extends Comparable<TimeSheetData>{
     return timeDone != null && initialTime != null && name != null && startDate != null;
   }
 
-  void decrement(double value) {
-    this.timeDone += value;
+  void decrement() {
+    this.timeDone += stepsTimeDone;
   }
 
   @override
@@ -80,5 +82,9 @@ class TimeSheetData extends Comparable<TimeSheetData>{
 
   bool hasEndDate() {
     return endDate.isPresent;
+  }
+
+  bool finished() {
+    return remainingTime <= 0;
   }
 }

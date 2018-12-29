@@ -169,13 +169,18 @@ class _MyRowItemState extends State<_MyRowItem> {
 
   @override
   Widget build(BuildContext context) {
+    var incrementTimeDoneButton = timeSheet.finished() ? null :
+    IconButton(onPressed: click,
+        icon: Icon(Icons.add),
+        key: Key("increment_button"),
+    );
     if (timeSheet.hasDate()) {
       return ListTile(
           title: Text(timeSheet.title,
               textDirection: TextDirection.ltr, textAlign: TextAlign.left,
           style: TextStyle(color: timeSheet.progress()),),
           trailing:
-          IconButton(onPressed: click, icon: Icon(Icons.add)),
+          incrementTimeDoneButton,
           leading: Text(timeSheet.formattedDate));
     }
     return ListTile(
@@ -183,7 +188,7 @@ class _MyRowItemState extends State<_MyRowItem> {
             textDirection: TextDirection.ltr, textAlign: TextAlign.left,
         style: TextStyle(color: timeSheet.progress())),
         trailing:
-        IconButton(onPressed: click, icon: Icon(Icons.add)));
+        incrementTimeDoneButton);
   }
 }
 

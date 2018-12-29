@@ -7,7 +7,9 @@ import 'package:flutter_app/overview/overview_model.dart';
 import 'package:flutter_app/timesheet_data.dart';
 import 'package:optional/optional_internal.dart';
 
-void main() => OverviewController(DataServiceImpl());
+void main() {
+  OverviewController(DataServiceImpl());
+}
 
 class OverviewController {
 
@@ -16,12 +18,13 @@ class OverviewController {
   DataService dataService;
 
   OverviewController(DataService dataService) {
-    dataService = dataService;
-    model = OverviewModel(dataService.getTimeSheetData());
+    this.dataService = dataService;
+    var loadedTimeSheets = this.dataService.getTimeSheetData();
+    model = OverviewModel();
     view = Overview(model,
       performClickOnTimeSheet: (TimeSheetData timeSheet) {
-        timeSheet.decrement(0.25);
-        dataService.update(timeSheet);
+        timeSheet.decrement();
+        this.dataService.update(timeSheet);
         model.updateAll();
         return;
       },
@@ -34,6 +37,7 @@ class OverviewController {
       },
     );
     runApp(view);
+    model.setTimeSheets(loadedTimeSheets);
   }
 
   void changeTimeSheet(TimeSheetData timeSheet) {

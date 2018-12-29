@@ -17,34 +17,76 @@ import 'package:optional/optional_internal.dart';
 
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+
+  testWidgets('widget is showed correct', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     var mockDataService = MockDataService();
-    mockDataService.store(TimeSheetData.from(100, "WASA",
-        Optional.of(DateTime(2018, 12, 31)),
-        Optional.of(DateTime(2019, 12, 31)),
-        1000));
+    var timeSheetData = TimeSheetData.from(0, "WASA",
+        Optional.of(DateTime.now()),
+        Optional.of(DateTime.now().add(Duration(days: 10))),
+        40);
+    mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
 
+    expect(find.text(timeSheetData.title), findsOneWidget);
+    expect(find.text(timeSheetData.title + " sodale"), findsNothing);
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text(timeSheetData.formattedDate), findsOneWidget);
+
 
     // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    //await tester.tap(find.byIcon(Icons.add));
+    //await tester.pump();
+
+  });
+
+  testWidgets('test increment time done', (WidgetTester tester) async {
+    var mockDataService = MockDataService();
+    var timeSheetData = TimeSheetData.from(0, "WASA",
+        Optional.of(DateTime.now()),
+        Optional.of(DateTime.now().add(Duration(days: 10))),
+        40);
+    mockDataService.store(timeSheetData);
+    OverviewController overviewController = OverviewController(mockDataService);
+    await tester.pumpWidget(overviewController.view);
+
+    var oldTitle = timeSheetData.title;
+
+    //tap time done
+    await tester.tap(find.byKey(Key("increment_button")));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text(oldTitle), findsNothing);
+    expect(find.text(timeSheetData.title), findsOneWidget);
+  });
+
+  testWidgets('test finished', (WidgetTester tester) async {
+    var mockDataService = MockDataService();
+    var timeSheetData = TimeSheetData.from(0, "WASA",
+        Optional.of(DateTime.now()),
+        Optional.of(DateTime.now().add(Duration(days: 10))),
+        TimeSheetData.stepsTimeDone);
+    mockDataService.store(timeSheetData);
+    OverviewController overviewController = OverviewController(mockDataService);
+    await tester.pumpWidget(overviewController.view);
+    //tap time done
+
+    var oldTitle = timeSheetData.title;
+
+    await tester.tap(find.byKey(Key("increment_button")));
+    await tester.pump();
+
+    expect(find.text(timeSheetData.title), findsOneWidget);
+    expect(find.text(oldTitle), findsNothing);
+    expect(find.byKey(Key("increment_button")), findsNothing);
+
   });
 }
 
 class MockDataService implements DataService {
 
-  List<TimeSheetData> timeSheets;
+  List<TimeSheetData> timeSheets = List();
 
   @override
   Future<bool> exists(TimeSheetData timeSheet) async {
@@ -64,13 +106,12 @@ class MockDataService implements DataService {
   @override
   Future<void> store(TimeSheetData timeSheet) async{
     exists(timeSheet).then((exist) {
-      if (exist) {
+      if (!exist) {
         this.timeSheets.add(timeSheet);
       } else {
         throw new AssertionError("You cannot store an time sheet that exists you have to update such a timesheet");
       }
     });
-    timeSheets.add(timeSheet);
   }
 
   @override
