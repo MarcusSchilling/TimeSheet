@@ -1,5 +1,6 @@
 import 'package:flutter_app/appointment/model.dart';
 import 'package:flutter_app/appointment/view.dart';
+import 'package:flutter_app/data_service.dart';
 import 'package:flutter_app/data_service_impl.dart';
 import 'package:flutter_app/overview/overview_controller.dart';
 import 'package:flutter_app/timesheet_data.dart';
@@ -9,26 +10,26 @@ class AppointmentController {
 
   AppointmentView view;
   AppointmentModel model;
-  DataServiceImpl dataService;
+  DataService dataService;
 
-  AppointmentController(Optional<TimeSheetData> timeSheet) {
+  AppointmentController(Optional<TimeSheetData> timeSheet, DataService dataService) {
     model = AppointmentModel.of(timeSheet);
     view = AppointmentView(timeSheet.isPresent ? update : save,
         model,
         exit,
         delete
     );
-    dataService = DataServiceImpl();
+    this.dataService = dataService;
   }
 
   Future<bool> exit() async {
-    OverviewController(DataServiceImpl());
+    OverviewController(dataService);
   }
 
   void save() {
     if (model.getTimeSheet().isValid()) {
       dataService.store(model.getTimeSheet());
-      OverviewController(DataServiceImpl());
+      OverviewController(dataService);
     } else {
       view.error("The Input is not valid");
     }
@@ -52,7 +53,7 @@ class AppointmentController {
   void update() {
     if (model.getTimeSheet().isValid()) {
       dataService.replace(model.getOldTimeSheet(), model.getTimeSheet())
-      .then((v) => OverviewController(DataServiceImpl()));
+      .then((v) => OverviewController(dataService));
     } else {
       view.error("This input cannot be updated. It is not Valid.");
     }

@@ -11,4 +11,14 @@ class Constants {
   static const Key listElementKey = Key("list_element");
 
   static const Key appointmentScaffoldKey = Key("appointment_view");
+
+  static const Key textOfListElementKey = Key("text_of_list_element");
+
+  static const Key nameTFKey = Key("name_text_field");
+
+  static const Key timeTFKey = Key("time_text_field");
+
+  static const Key deleteButtonKey = Key("delete_button");
+
+  static const Key saveButtonKey = Key("save_button");
 }

@@ -129,12 +129,14 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
 
   RaisedButton deleteButton() {
     return RaisedButton(
-        onPressed: delete, padding: EdgeInsets.all(edge), child: Text("Löschen"));
+        onPressed: delete, padding: EdgeInsets.all(edge), child: Text("Löschen"),
+    key: Constants.deleteButtonKey);
   }
 
   RaisedButton saveButton() {
     return RaisedButton(
-        onPressed: save, padding: EdgeInsets.all(edge), child: Text("Speichern"));
+        onPressed: save, padding: EdgeInsets.all(edge), child: Text("Speichern"),
+    key: Constants.saveButtonKey);
   }
 
   Row nameRow() {
@@ -142,6 +144,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     if (model.hasName()) {
       nameTF = TextField(
         controller: nameEditingController,
+        key: Constants.nameTFKey,
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: "Bitte Namen der Aufgabe eingeben",
@@ -152,6 +155,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     } else {
       nameTF = TextField(
         controller: nameEditingController,
+        key: Constants.nameTFKey,
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: "Bitte Namen der Aufgabe eingeben",
@@ -180,6 +184,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     if (model.hasTime()) {
       timeTF = TextField(
         controller: timeEditingController,
+        key: Constants.timeTFKey,
         decoration: InputDecoration(
             border: InputBorder.none,
             hintText: "Bitte Zeit der Aufgabe eingeben",
@@ -190,6 +195,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     } else {
       timeTF = TextField(
         controller: timeEditingController,
+        key: Constants.timeTFKey,
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: "Bitte Zeit der Aufgabe eingeben",

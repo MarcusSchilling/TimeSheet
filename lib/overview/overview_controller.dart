@@ -41,13 +41,12 @@ class OverviewController {
   }
 
   void changeTimeSheet(TimeSheetData timeSheet) {
-    AppointmentController controller = AppointmentController(
-        Optional.of(timeSheet));
+    AppointmentController controller = AppointmentController(Optional.of(timeSheet), dataService);
     runApp(controller.view);
   }
 
   void newTimeSheetData() {
-    AppointmentController controller = AppointmentController(Optional.empty());
+    AppointmentController controller = AppointmentController(Optional.empty(), dataService);
     runApp(controller.view);
   }
 
