@@ -6,12 +6,14 @@ class AppointmentModel {
 
   TimeSheetData oldTimeSheetData;
   TimeSheetData updatedOrNewTimeSheetData;
+  Stopwatch stopwatch;
 
   AppointmentModel.of(Optional<TimeSheetData> timeSheet) {
     this.oldTimeSheetData = timeSheet.isPresent ? timeSheet.value : TimeSheetData.from(0, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null);
     this.updatedOrNewTimeSheetData = timeSheet.isPresent
     ? TimeSheetData.from(timeSheet.value.timeDone, timeSheet.value.name, timeSheet.value.startDate, timeSheet.value.endDate, timeSheet.value.initialTime):
     TimeSheetData.from(0, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null);
+    stopwatch = Stopwatch();
   }
 
   TimeSheetData getTimeSheet() {
