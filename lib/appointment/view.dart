@@ -88,11 +88,13 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   DeleteTimeSheet delete;
   StopWatchAction stopWatchAction;
   StopWatchAction resetWatch;
+  Timer timer;
   static const double edge = 10;
 
   _MyAppointmentViewState(this.model, this.save, this.exit, this.delete, this.stopWatchAction, this.resetWatch);
 
   Future<bool> _onWillPop() {
+    timer.cancel();
     return exit();
   }
 
@@ -125,7 +127,8 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   }
 
   Padding stopWatch() {
-    new Timer.periodic(new Duration(milliseconds: 500), (timer) => setState(() => timer.isActive));
+    timer = new Timer.periodic(new Duration(milliseconds: 300),
+            (timer) => setState(() => timer.isActive));
     return new Padding(
       padding: EdgeInsets.only(left: edge, right: edge),
       child: new Row(
@@ -168,7 +171,10 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
 
   RaisedButton saveButton() {
     return RaisedButton(
-        onPressed: save, padding: EdgeInsets.all(edge), child: Text("Speichern"),
+        onPressed: () {
+          timer.cancel();
+          save();
+        }, padding: EdgeInsets.all(edge), child: Text("Speichern"),
     key: Constants.saveButtonKey);
   }
 

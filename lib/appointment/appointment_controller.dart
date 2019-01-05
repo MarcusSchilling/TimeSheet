@@ -35,9 +35,6 @@ class AppointmentController {
   }
 
   void resetAction() {
-    if (model.stopwatch.isRunning) {
-      model.stopwatch.stop();
-    }
     model.stopwatch.reset();
   }
 
