@@ -18,6 +18,8 @@ class Stopwatch {
 
   bool get isRunning => _stoppedTimes.length.isOdd;
 
+  String get stoppedTime => getStoppedTime().toString().split(".").elementAt(0);
+
   start() {
     assert(!isRunning);
     _stoppedTimes.add(_getCurrentDateTime());

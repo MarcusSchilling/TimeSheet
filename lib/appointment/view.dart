@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -123,16 +125,19 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   }
 
   Padding stopWatch() {
+    new Timer.periodic(new Duration(milliseconds: 500), (timer) => setState(() => timer.isActive));
     return new Padding(
       padding: EdgeInsets.only(left: edge, right: edge),
       child: new Row(
         children: <Widget>[
-          Flexible(child: IconButton(onPressed: resetWatch,
+          Flexible(child: IconButton(onPressed: () => setState(() => resetWatch()),
               icon: Icon(Icons.restore),
               key: Constants.resetWatch),
               fit: FlexFit.tight,
               ),
-          Flexible(child: IconButton(onPressed: stopWatchAction,
+          Flexible(fit: FlexFit.tight,
+                  child: Text(model.stopwatch.stoppedTime, textAlign: TextAlign.center,),),
+          Flexible(child: IconButton(onPressed: () => setState(() => stopWatchAction()),
               icon: Icon(model.timerIsRunning() ? Icons.stop : Icons.arrow_forward_ios),
               key: Constants.startStopWatch),
             fit: FlexFit.tight,
