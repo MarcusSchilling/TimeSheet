@@ -5,6 +5,7 @@ import 'package:flutter_app/data_service_impl.dart';
 import 'package:flutter_app/overview/overview_controller.dart';
 import 'package:flutter_app/timesheet_data.dart';
 import 'package:optional/optional_internal.dart';
+import 'package:flutter_app/stopwatch.dart';
 
 class AppointmentController {
 
@@ -17,9 +18,24 @@ class AppointmentController {
     view = AppointmentView(timeSheet.isPresent ? update : save,
         model,
         exit,
-        delete
+        delete,
+        stopWatchAction,
+        resetAction
     );
     this.dataService = dataService;
+    model.stopwatch = Stopwatch();
+  }
+
+  void stopWatchAction() {
+    if (model.stopwatch.isRunning) {
+      model.stopwatch.stop();
+    } else {
+      model.stopwatch.start();
+    }
+  }
+
+  void resetAction() {
+    model.stopwatch.reset();
   }
 
   Future<bool> exit() async {
@@ -28,6 +44,7 @@ class AppointmentController {
 
   void save() {
     if (model.getTimeSheet().isValid()) {
+      model.decrementWithStopwatch();
       dataService.store(model.getTimeSheet());
       OverviewController(dataService);
     } else {
@@ -52,7 +69,8 @@ class AppointmentController {
 
   void update() {
     if (model.getTimeSheet().isValid()) {
-      dataService.replace(model.getOldTimeSheet(), model.getTimeSheet())
+      model.decrementWithStopwatch();
+      dataService.replace(model.getTimeSheet(), model.getOldTimeSheet())
       .then((v) => OverviewController(dataService));
     } else {
       view.error("This input cannot be updated. It is not Valid.");

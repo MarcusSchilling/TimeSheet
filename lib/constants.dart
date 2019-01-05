@@ -21,4 +21,8 @@ class Constants {
   static const Key deleteButtonKey = Key("delete_button");
 
   static const Key saveButtonKey = Key("save_button");
+
+  static const Key startStopWatch = Key("start_stop_button");
+
+  static const Key resetWatch = Key("reset_button");
 }

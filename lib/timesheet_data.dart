@@ -34,11 +34,16 @@ class TimeSheetData extends Comparable<TimeSheetData>{
       name.hashCode ^
       startDate.hashCode;
 
-  bool hasDate() {
+  bool hasStartDate() {
     return startDate.isPresent;
   }
 
+  bool hasEndDate() {
+    return endDate.isPresent;
+  }
+
   Color progress() {
+    assert (hasEndDate());
     int daysToWork = endDate.value.difference(startDate.value).inDays;
     int daysGone = DateTime.now().difference(startDate.value).inDays;
     double percentageGone = daysGone / daysToWork;
@@ -50,7 +55,9 @@ class TimeSheetData extends Comparable<TimeSheetData>{
     }
   }
 
-  String get title => name + ": " + initialTimeFormatted + " done: " + timeDone.toString();
+  String get formattedTimeDone => ((timeDone * 100).round() / 100).toString();
+
+  String get title => name + ": " + initialTimeFormatted + " done: " + formattedTimeDone;
 
   double get remainingTime => initialTime - timeDone;
 
@@ -70,18 +77,19 @@ class TimeSheetData extends Comparable<TimeSheetData>{
     return timeDone != null && initialTime != null && name != null && startDate != null;
   }
 
-  void decrement() {
-    this.timeDone += stepsTimeDone;
+  void decrement({Duration duration}) {
+    assert (duration == null || !duration.isNegative);
+    if (duration != null) {
+      this.timeDone += duration.inMinutes / 60.0;
+    } else {
+      this.timeDone += stepsTimeDone;
+    }
   }
 
   @override
   int compareTo(TimeSheetData other) {
     return this.endDate.orElseGet(() => DateTime(0))
         .compareTo(other.endDate.orElseGet(() => DateTime(0)));
-  }
-
-  bool hasEndDate() {
-    return endDate.isPresent;
   }
 
   bool finished() {

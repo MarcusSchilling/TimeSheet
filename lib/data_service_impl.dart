@@ -23,7 +23,7 @@ class DataServiceImpl implements DataService{
     return storage.updateTimeSheet(timeSheet);
   }
 
-  Future<void> replace(TimeSheetData oldTimeSheet, TimeSheetData timeSheet) {
+  Future<void> replace(TimeSheetData timeSheet, TimeSheetData oldTimeSheet) {
     return storage.delete(oldTimeSheet).then((v) => storage.writeCounter(timeSheet));
   }
 

@@ -9,6 +9,7 @@ import 'package:optional/optional_internal.dart';
 
 typedef void DeleteTimeSheet();
 typedef Future<bool> Exit();
+typedef void StopWatchAction();
 
 class AppointmentView extends StatelessWidget {
   VoidCallback save;
@@ -16,12 +17,14 @@ class AppointmentView extends StatelessWidget {
   AppointmentModel model;
   Exit exit;
   DeleteTimeSheet deleteTimeSheet;
+  StopWatchAction startStopWatch;
+  StopWatchAction resetWatch;
 
-  AppointmentView(this.save, this.model, this.exit, this.deleteTimeSheet);
+  AppointmentView(this.save, this.model, this.exit, this.deleteTimeSheet, this.startStopWatch, this.resetWatch);
 
   @override
   Widget build(BuildContext context) {
-    view = MyAppointmentView(model, save, exit, deleteTimeSheet,
+    view = MyAppointmentView(model, save, exit, deleteTimeSheet, startStopWatch, resetWatch,
         title: "Appointment");
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -43,7 +46,7 @@ class AppointmentView extends StatelessWidget {
 }
 
 class MyAppointmentView extends StatefulWidget {
-  MyAppointmentView(this.model, this.save, this.exit, this.delete,
+  MyAppointmentView(this.model, this.save, this.exit, this.delete, this.stopWatchAction, this.resetWatch,
       {Key key, title})
       : super(key: key);
 
@@ -52,11 +55,13 @@ class MyAppointmentView extends StatefulWidget {
   _MyAppointmentViewState viewState;
   Exit exit;
   DeleteTimeSheet delete;
+  StopWatchAction stopWatchAction;
+  StopWatchAction resetWatch;
 
   @override
   _MyAppointmentViewState createState() {
     viewState =
-        _MyAppointmentViewState(this.model, this.save, this.exit, this.delete);
+        _MyAppointmentViewState(this.model, this.save, this.exit, this.delete, this.stopWatchAction, this.resetWatch);
     return viewState;
   }
 
@@ -79,9 +84,11 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   BuildContext context;
   Exit exit;
   DeleteTimeSheet delete;
+  StopWatchAction stopWatchAction;
+  StopWatchAction resetWatch;
   static const double edge = 10;
 
-  _MyAppointmentViewState(this.model, this.save, this.exit, this.delete);
+  _MyAppointmentViewState(this.model, this.save, this.exit, this.delete, this.stopWatchAction, this.resetWatch);
 
   Future<bool> _onWillPop() {
     return exit();
@@ -94,7 +101,8 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
         nameRow(),
         timeRow(),
         dateFormatRow(),
-        deleteSaveRow()
+        deleteSaveRow(),
+        stopWatch()
       ],
       // This trailing comma makes auto-formatting nicer for build methods.
     );
@@ -112,6 +120,26 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
           },
         ));
     return new WillPopScope(child: scaffold, onWillPop: _onWillPop);
+  }
+
+  Padding stopWatch() {
+    return new Padding(
+      padding: EdgeInsets.only(left: edge, right: edge),
+      child: new Row(
+        children: <Widget>[
+          Flexible(child: IconButton(onPressed: resetWatch,
+              icon: Icon(Icons.restore),
+              key: Constants.resetWatch),
+              fit: FlexFit.tight,
+              ),
+          Flexible(child: IconButton(onPressed: stopWatchAction,
+              icon: Icon(model.timerIsRunning() ? Icons.stop : Icons.arrow_forward_ios),
+              key: Constants.startStopWatch),
+            fit: FlexFit.tight,
+          ),
+        ],
+      ),
+    );
   }
 
   Padding deleteSaveRow() {

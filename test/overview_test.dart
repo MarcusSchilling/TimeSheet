@@ -181,6 +181,17 @@ void main() {
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
   });
+
+  testWidgets('test without enddate', (WidgetTester tester) async {
+    MockDataService mockDataService = MockDataService();
+    var timeSheetData = TimeSheetData.from(0, "WASA",
+        Optional.of(DateTime.now().add(Duration(days: -10))),
+        Optional<DateTime>.empty(),
+        100);
+    mockDataService.store(timeSheetData);
+    OverviewController overviewController = OverviewController(mockDataService);
+    await tester.pumpWidget(overviewController.view);
+  });
   //TODO test coloring of list items
 
 }

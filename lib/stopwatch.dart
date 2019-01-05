@@ -16,13 +16,15 @@ class Stopwatch {
     _stoppedTimes.clear();
   }
 
+  bool get isRunning => _stoppedTimes.length.isOdd;
+
   start() {
-    assert(_stoppedTimes.length.isEven);
+    assert(!isRunning);
     _stoppedTimes.add(_getCurrentDateTime());
   }
 
   stop() {
-    assert(_stoppedTimes.length.isOdd);
+    assert(isRunning);
     _stoppedTimes.add(_getCurrentDateTime());
   }
 

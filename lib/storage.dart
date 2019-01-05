@@ -18,7 +18,7 @@ class Storage {
             [
               timeSheet.name,
               timeSheet.timeDone,
-              timeSheet.hasDate() ? timeSheet.startDate.value.toIso8601String() : null,
+              timeSheet.hasStartDate() ? timeSheet.startDate.value.toIso8601String() : null,
               timeSheet.hasEndDate() ? timeSheet.endDate.value.toIso8601String() : null,
               timeSheet.initialTime
             ])));
@@ -29,7 +29,7 @@ class Storage {
             "UPDATE Tasks SET time_done = ?, start_date = ?, end_date = ?, initial_time = ? WHERE name == ?",
             [
               timeSheet.timeDone,
-              timeSheet.hasDate() ? timeSheet.startDate.value.toIso8601String() : null,
+              timeSheet.hasStartDate() ? timeSheet.startDate.value.toIso8601String() : null,
               timeSheet.hasEndDate() ? timeSheet.endDate.value.toIso8601String() : null,
               timeSheet.initialTime,
               timeSheet.name

@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:optional/optional_internal.dart';
 
 import 'mock_extensions/MockDataService.dart';
-
+import 'dart:io';
 
 void main() {
 
@@ -60,6 +60,27 @@ void main() {
     expect(target.initialTime, 230);
     expect(target.startDate.value.difference(DateTime.now()).inMinutes < 3, isTrue);
     expect(target.endDate, Optional<DateTime>.empty());
+  });
+
+  testWidgets('use stopwatch', (WidgetTester tester) async {
+    DataService dataService = MockDataService();
+    var timeSheetToUpdate = TimeSheetData.from(0,
+        "Hallo",
+        Optional.of(DateTime.now()),
+        Optional<DateTime>.empty(), 100);
+    await dataService.store(timeSheetToUpdate);
+    AppointmentController emptyAppointmentController
+    = AppointmentController(Optional.of(timeSheetToUpdate), dataService);
+    await tester.pumpWidget(emptyAppointmentController.view);
+
+
+    await tester.tap(find.byKey(Constants.startStopWatch));
+    sleep(Duration(minutes: 1, seconds: 10));
+    await tester.tap(find.byKey(Constants.startStopWatch));
+    await tester.tap(find.byKey(Constants.saveButtonKey));
+    List<TimeSheetData> timeSheets = await dataService.getTimeSheetData();
+    expect(timeSheets.elementAt(0).timeDone > 0.0, true);
+
   });
 
 }

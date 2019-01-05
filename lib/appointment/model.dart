@@ -1,6 +1,7 @@
 
 import 'package:flutter_app/timesheet_data.dart';
 import 'package:optional/optional_internal.dart';
+import 'package:flutter_app/stopwatch.dart';
 
 class AppointmentModel {
 
@@ -38,6 +39,14 @@ class AppointmentModel {
 
   TimeSheetData getOldTimeSheet() {
     return oldTimeSheetData;
+  }
+
+  bool timerIsRunning() {
+    return stopwatch.isRunning;
+  }
+
+  void decrementWithStopwatch() {
+    updatedOrNewTimeSheetData.decrement(duration: stopwatch.getStoppedTime());
   }
 
 }

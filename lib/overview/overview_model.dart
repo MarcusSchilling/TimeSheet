@@ -30,7 +30,7 @@ class OverviewModel {
     if (updateView != null) {
       updateView(timeSheets);
     } else {
-      throw new Exception("There is no OverviewModel update method registered");
+      //throw new Exception("There is no OverviewModel update method registered");
     }
   }
 

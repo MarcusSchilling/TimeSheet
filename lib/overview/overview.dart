@@ -178,7 +178,7 @@ class _MyRowItemState extends State<_MyRowItem> {
         icon: Icon(Icons.add),
         key: Constants.incrementButtonKey,
     );
-    if (timeSheet.hasDate()) {
+    if (timeSheet.hasEndDate()) {
       return ListTile(
           title: Text(timeSheet.title,
               textDirection: TextDirection.ltr, textAlign: TextAlign.left,
@@ -189,8 +189,7 @@ class _MyRowItemState extends State<_MyRowItem> {
     }
     return ListTile(
         title: Text(timeSheet.title,
-            textDirection: TextDirection.ltr, textAlign: TextAlign.left,
-        style: TextStyle(color: timeSheet.progress())),
+            textDirection: TextDirection.ltr, textAlign: TextAlign.left),
         trailing:
         incrementTimeDoneButton);
   }
