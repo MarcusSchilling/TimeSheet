@@ -8,8 +8,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/appointment/appointment_controller.dart';
 import 'package:flutter_app/constants.dart';
-import 'package:flutter_app/data_service.dart';
-import 'package:flutter_app/data_service_impl.dart';
+import 'package:flutter_app/services/data_service.dart';
+import 'package:flutter_app/services/data_service_impl.dart';
 import 'package:flutter_app/overview/overview.dart';
 import 'package:flutter_app/overview/overview_controller.dart';
 import 'package:flutter_app/overview/overview_model.dart';
