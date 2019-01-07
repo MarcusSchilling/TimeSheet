@@ -44,8 +44,11 @@ void main() {
         Optional.of(DateTime.now()),
         Optional<DateTime>.empty(), 100);
     await dataService.store(timeSheetToUpdate);
+    OverviewController overviewController;
     AppointmentController emptyAppointmentController
-    = AppointmentController(Optional.of(timeSheetToUpdate), dataService);
+    = AppointmentController(Optional.of(timeSheetToUpdate), dataService, 
+    moveToOverview: (dataService) => overviewController = OverviewController(dataService)
+    );
 
     await tester.pumpWidget(emptyAppointmentController.view);
     await tester.enterText(find.byKey(Constants.timeTFKey), '230');
@@ -53,7 +56,6 @@ void main() {
 
 
     List<TimeSheetData> timeSheetData = await dataService.getTimeSheetData();
-    await tester.tap(find.text("Speichern"));
     var target = timeSheetData.elementAt(0);
     expect(target.name, 'Hallo');
     expect(target.timeDone, 0);
@@ -69,8 +71,11 @@ void main() {
         Optional.of(DateTime.now()),
         Optional<DateTime>.empty(), 100);
     await dataService.store(timeSheetToUpdate);
+    OverviewController overviewController;
     AppointmentController emptyAppointmentController
-    = AppointmentController(Optional.of(timeSheetToUpdate), dataService);
+    = AppointmentController(Optional.of(timeSheetToUpdate), dataService, moveToOverview: (timeSheet) {
+        overviewController = OverviewController(dataService);
+    });
     await tester.pumpWidget(emptyAppointmentController.view);
 
 
@@ -78,6 +83,7 @@ void main() {
     sleep(Duration(minutes: 1, seconds: 10));
     await tester.tap(find.byKey(Constants.startStopWatch));
     await tester.tap(find.byKey(Constants.saveButtonKey));
+    //await tester.pumpWidget(overviewController.view);
     List<TimeSheetData> timeSheets = await dataService.getTimeSheetData();
     expect(timeSheets.elementAt(0).timeDone > 0.0, true);
 

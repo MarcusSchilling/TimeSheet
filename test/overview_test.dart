@@ -6,6 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/appointment/appointment_controller.dart';
 import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/data_service.dart';
 import 'package:flutter_app/data_service_impl.dart';
@@ -29,14 +30,14 @@ void main() {
         timeNow,
         endTime,
         40);
-    mockDataService.store(timeSheetData);
+    await mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
+    expect(find.byKey(Constants.listElementKey), findsOneWidget);
 
     expect(find.text(timeSheetData.title), findsOneWidget);
     expect(find.text(timeSheetData.title + " sodale"), findsNothing);
 
-    expect(find.text(timeSheetData.formattedDate), findsOneWidget);
 
 
     // Tap the '+' icon and trigger a frame.
@@ -51,7 +52,7 @@ void main() {
         timeNow,
         endTime,
         40);
-    mockDataService.store(timeSheetData);
+    await mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
 
@@ -80,7 +81,7 @@ void main() {
         timeNow,
         endTime,
         TimeSheetData.stepsTimeDone);
-    mockDataService.store(timeSheetData);
+    await mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
     //tap time done
@@ -124,7 +125,10 @@ void main() {
         endTime,
         TimeSheetData.stepsTimeDone);
     mockDataService.store(timeSheetData);
-    OverviewController overviewController = OverviewController(mockDataService);
+    AppointmentController appointmentController;
+    OverviewController overviewController = OverviewController(mockDataService, moveToDetailView: (timeSheet) {
+      appointmentController = AppointmentController(timeSheet, mockDataService);
+    });
     await tester.pumpWidget(overviewController.view);
     //tap time done
 
@@ -135,13 +139,11 @@ void main() {
     expect(find.byKey(Constants.overviewScaffoldKey), findsOneWidget);
 
     await tester.tap(find.byKey(Constants.newAppointmentButtonKey));
-    await tester.pump();
+    await tester.pumpWidget(appointmentController.view);
     expect(find.text(timeSheetData.title), findsNothing);
     expect(find.byKey(Constants.overviewScaffoldKey), findsNothing);
     expect(find.byKey(Constants.appointmentScaffoldKey), findsOneWidget);
-    List list = List();
-    list.add(timeSheetData);
-    expect(mockDataService.timeSheets, list);
+    expect(mockDataService.timeSheets.elementAt(0), timeSheetData);
   });
 
   testWidgets('test move to other activity after clicking timesheet', (WidgetTester tester) async {
@@ -151,7 +153,10 @@ void main() {
         endTime,
         TimeSheetData.stepsTimeDone);
     mockDataService.store(timeSheetData);
-    OverviewController overviewController = OverviewController(mockDataService);
+    AppointmentController appointmentController;
+    OverviewController overviewController = OverviewController(mockDataService, moveToDetailView: (timeSheet) {
+      appointmentController = AppointmentController(timeSheet, mockDataService);
+    });
     await tester.pumpWidget(overviewController.view);
 
     //tap time done
@@ -162,13 +167,11 @@ void main() {
     expect(find.byKey(Constants.overviewScaffoldKey), findsOneWidget);
 
     await tester.tap(find.byKey(Constants.listElementKey));
-    await tester.pump();
+    await tester.pumpWidget(appointmentController.view);
     expect(find.text(timeSheetData.title), findsNothing);
     expect(find.byKey(Constants.overviewScaffoldKey), findsNothing);
     expect(find.byKey(Constants.appointmentScaffoldKey), findsOneWidget);
-    List list = List();
-    list.add(timeSheetData);
-    expect(mockDataService.timeSheets, list);
+    expect(mockDataService.timeSheets.elementAt(0), timeSheetData);
   });
 
   testWidgets('test correct text color of activity', (WidgetTester tester) async {

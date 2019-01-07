@@ -8,16 +8,19 @@ import 'package:flutter_app/timesheet_data.dart';
 import 'package:optional/optional_internal.dart';
 
 void main() {
-  OverviewController(DataServiceImpl());
+  var overviewController = OverviewController(DataServiceImpl());
+  runApp(overviewController.view);
 }
+typedef void MoveToDetailView(Optional<TimeSheetData> timeSheet);
 
 class OverviewController {
 
   OverviewModel model;
   Overview view;
   DataService dataService;
+  MoveToDetailView moveToDetailView;
 
-  OverviewController(DataService dataService) {
+  OverviewController(DataService dataService, {MoveToDetailView moveToDetailView}) {
     this.dataService = dataService;
     var loadedTimeSheets = this.dataService.getTimeSheetData();
     model = OverviewModel();
@@ -29,25 +32,16 @@ class OverviewController {
         return;
       },
       changeTimeSheet: () {
-        if (model.selectedTimeSheet.isPresent) {
-          changeTimeSheet(model.selectedTimeSheet.value);
-        } else {
-          newTimeSheetData();
-        }
+        var timeSheet = model.selectedTimeSheet;
+        this.moveToDetailView(timeSheet);
       },
     );
     runApp(view);
     model.setTimeSheets(loadedTimeSheets);
-  }
-
-  void changeTimeSheet(TimeSheetData timeSheet) {
-    AppointmentController controller = AppointmentController(Optional.of(timeSheet), dataService);
-    runApp(controller.view);
-  }
-
-  void newTimeSheetData() {
-    AppointmentController controller = AppointmentController(Optional.empty(), dataService);
-    runApp(controller.view);
+    this.moveToDetailView = moveToDetailView != null ? moveToDetailView : (timeSheet) {
+      AppointmentController controller = AppointmentController(timeSheet, dataService);
+      runApp(controller.view);
+    };
   }
 
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_app/appointment/model.dart';
 import 'package:flutter_app/appointment/view.dart';
 import 'package:flutter_app/data_service.dart';
@@ -7,13 +8,20 @@ import 'package:flutter_app/timesheet_data.dart';
 import 'package:optional/optional_internal.dart';
 import 'package:flutter_app/stopwatch.dart';
 
+typedef void MoveToOverview(DataService dataService);
+
 class AppointmentController {
 
   AppointmentView view;
   AppointmentModel model;
   DataService dataService;
+  MoveToOverview moveToOverview;
 
-  AppointmentController(Optional<TimeSheetData> timeSheet, DataService dataService) {
+  AppointmentController(Optional<TimeSheetData> timeSheet, DataService dataService, {MoveToOverview moveToOverview}) {
+    this.moveToOverview = moveToOverview == null ? (dataService) {
+      var overviewController = OverviewController(dataService);
+      runApp(overviewController.view);
+    } : moveToOverview;
     model = AppointmentModel.of(timeSheet);
     view = AppointmentView(timeSheet.isPresent ? update : save,
         model,
@@ -23,7 +31,7 @@ class AppointmentController {
         resetAction
     );
     this.dataService = dataService;
-    model.stopwatch = Stopwatch();
+    runApp(view);
   }
 
   void stopWatchAction() {
@@ -39,14 +47,14 @@ class AppointmentController {
   }
 
   Future<bool> exit() async {
-    OverviewController(dataService);
+    moveToOverview(dataService);
   }
 
   void save() {
     if (model.getTimeSheet().isValid()) {
       model.decrementWithStopwatch();
       dataService.store(model.getTimeSheet());
-      OverviewController(dataService);
+      moveToOverview(dataService);
     } else {
       view.error("The Input is not valid");
     }
@@ -71,7 +79,7 @@ class AppointmentController {
     if (model.getTimeSheet().isValid()) {
       model.decrementWithStopwatch();
       dataService.replace(model.getTimeSheet(), model.getOldTimeSheet())
-      .then((v) => OverviewController(dataService));
+      .then((v) => moveToOverview(dataService));
     } else {
       view.error("This input cannot be updated. It is not Valid.");
     }

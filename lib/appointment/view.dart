@@ -34,7 +34,7 @@ class AppointmentView extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: view,
+      home: view
     );
   }
 
@@ -94,7 +94,6 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   _MyAppointmentViewState(this.model, this.save, this.exit, this.delete, this.stopWatchAction, this.resetWatch);
 
   Future<bool> _onWillPop() {
-    timer.cancel();
     return exit();
   }
 
@@ -125,6 +124,13 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
         ));
     return new WillPopScope(child: scaffold, onWillPop: _onWillPop);
   }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
 
   Padding stopWatch() {
     timer = new Timer.periodic(new Duration(milliseconds: 300),
@@ -172,7 +178,6 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   RaisedButton saveButton() {
     return RaisedButton(
         onPressed: () {
-          timer.cancel();
           save();
         }, padding: EdgeInsets.all(edge), child: Text("Speichern"),
     key: Constants.saveButtonKey);
