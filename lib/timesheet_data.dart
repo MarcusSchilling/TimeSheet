@@ -42,13 +42,24 @@ class TimeSheetData extends Comparable<TimeSheetData>{
     return endDate.isPresent;
   }
 
-  Color progress() {
+  /// calculates the color of the progress made by the user
+  /// the criticalTime default is 7 days. For the time before of the last 7 days
+  /// the user must accomplish 50% of the initialTime after that he must accomplish
+  /// a linear curve from the start to end date and equal distribution of the
+  /// initial time over the
+  /// returns: Colors.red for being out of plan otherwise Colors.green
+  Color progress({Duration criticalTime = const Duration(days: 7)}) {
     assert (hasEndDate());
     int daysToWork = endDate.value.difference(startDate.value).inDays;
     int daysGone = DateTime.now().difference(startDate.value).inDays;
     double percentageGone = daysGone / daysToWork;
-    var timeTargetToToday = percentageGone * initialTime;
-    if (timeTargetToToday - acceptedTimeBuffer.inHours > timeDone) {
+    var timeTargetToToday;
+    if(daysToWork - daysGone <= criticalTime.inDays) {
+      timeTargetToToday = percentageGone * initialTime;
+    } else {
+      timeTargetToToday = (daysGone / (daysToWork - criticalTime.inDays)) * (initialTime / 2);
+    }
+    if (timeTargetToToday > timeDone) {
       return Colors.red;
     } else {
       return Colors.green;
