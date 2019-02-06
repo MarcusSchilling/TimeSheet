@@ -173,8 +173,7 @@ class _MyRowItemState extends State<_MyRowItem> {
 
   @override
   Widget build(BuildContext context) {
-    var incrementTimeDoneButton = timeSheet.finished() ? null :
-    IconButton(onPressed: click,
+    var incrementTimeDoneButton = IconButton(onPressed: click,
         icon: Icon(Icons.add),
         key: Constants.incrementButtonKey,
     );

@@ -22,7 +22,9 @@ class OverviewController {
 
   OverviewController(DataService dataService, {MoveToDetailView moveToDetailView}) {
     this.dataService = dataService;
-    var loadedTimeSheets = this.dataService.getTimeSheetData();
+    var loadedTimeSheets = this.dataService.getTimeSheetData().then((timesheets) async {
+      return timesheets.where((td) => !td.timePassed).toList();
+    } );
     model = OverviewModel();
     view = Overview(model,
       performClickOnTimeSheet: (TimeSheetData timeSheet) {

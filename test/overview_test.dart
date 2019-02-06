@@ -23,6 +23,7 @@ void main() {
 
   var timeNow = Optional.of(DateTime.now());
   var endTime = Optional.of(DateTime.now().add(Duration(days: 10)));
+  var timeDone = Optional.of(DateTime.now().add(Duration(days: -10)));
   testWidgets('widget is showed correct', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     MockDataService mockDataService = MockDataService();
@@ -75,31 +76,7 @@ void main() {
     expect(result, expected);
   });
 
-  testWidgets('test finished appointment doesnt have an icon for incrementing time after initial time is done', (WidgetTester tester) async {
-    MockDataService mockDataService = MockDataService();
-    var timeSheetData = TimeSheetData.from(0, "WASA",
-        timeNow,
-        endTime,
-        TimeSheetData.stepsTimeDone);
-    await mockDataService.store(timeSheetData);
-    OverviewController overviewController = OverviewController(mockDataService);
-    await tester.pumpWidget(overviewController.view);
-    //tap time done
-
-    var oldTitle = timeSheetData.title;
-
-    await tester.tap(find.byKey(Constants.incrementButtonKey));
-    await tester.pump();
-
-    expect(find.text(timeSheetData.title), findsOneWidget);
-    expect(find.text(oldTitle), findsNothing);
-    expect(find.byKey(Constants.incrementButtonKey), findsNothing);
-    TimeSheetData expected = TimeSheetData.from(TimeSheetData.stepsTimeDone, "WASA", timeNow, endTime, TimeSheetData.stepsTimeDone);
-    var result = mockDataService.timeSheets.first;
-    expect(result, expected);
-  });
-
-  testWidgets('test finished appointment doesnt have an icon for incrementing time after end date passed', (WidgetTester tester) async {
+  testWidgets('test finished appointment doesnt appears after end date time passed', (WidgetTester tester) async {
     MockDataService mockDataService = MockDataService();
     var timeSheetData = TimeSheetData.from(0, "WASA",
         Optional.of(DateTime.now().add(Duration(days: -12))),
@@ -110,9 +87,8 @@ void main() {
     await tester.pumpWidget(overviewController.view);
     //tap time done
 
-    expect(find.text(timeSheetData.title), findsOneWidget);
+    expect(find.text(timeSheetData.title), findsNothing);
     expect(find.byKey(Constants.incrementButtonKey), findsNothing);
-
     List list = List();
     list.add(timeSheetData);
     expect(mockDataService.timeSheets, list);

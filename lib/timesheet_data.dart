@@ -18,6 +18,8 @@ class TimeSheetData extends Comparable<TimeSheetData>{
 
   TimeSheetData.from(this.timeDone, this.name, this.startDate, this.endDate, this.initialTime);
 
+  get timePassed => endDate.isPresent && endDate.value.compareTo(DateTime.now()) < 0;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -101,9 +103,5 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   int compareTo(TimeSheetData other) {
     return this.endDate.orElseGet(() => DateTime(0))
         .compareTo(other.endDate.orElseGet(() => DateTime(0)));
-  }
-
-  bool finished() {
-    return (endDate.isPresent && endDate.value.compareTo(DateTime.now()) <= 0);
   }
 }
