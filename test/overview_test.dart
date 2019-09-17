@@ -13,7 +13,7 @@ import 'package:flutter_app/services/data_service_impl.dart';
 import 'package:flutter_app/overview/overview.dart';
 import 'package:flutter_app/overview/overview_controller.dart';
 import 'package:flutter_app/overview/overview_model.dart';
-import 'package:flutter_app/timesheet_data.dart';
+import 'package:flutter_app/timesheet.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:optional/optional_internal.dart';
 

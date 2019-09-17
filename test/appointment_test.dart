@@ -3,7 +3,7 @@ import 'package:flutter_app/appointment/appointment_controller.dart';
 import 'package:flutter_app/constants.dart';
 import 'package:flutter_app/services/data_service.dart';
 import 'package:flutter_app/overview/overview_controller.dart';
-import 'package:flutter_app/timesheet_data.dart';
+import 'package:flutter_app/timesheet.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:optional/optional_internal.dart';
 

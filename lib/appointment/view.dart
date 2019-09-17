@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/appointment/model.dart';
 import 'package:flutter_app/constants.dart';
-import 'package:flutter_app/timesheet_data.dart';
+import 'package:flutter_app/timesheet.dart';
 import 'package:intl/intl.dart';
 import 'package:optional/optional_internal.dart';
 
@@ -187,7 +187,6 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     Text name = Text("Name: ", textAlign: TextAlign.left);
     if (model.hasName()) {
       nameTF = TextField(
-        controller: nameEditingController,
         key: Constants.nameTFKey,
         decoration: InputDecoration(
           border: InputBorder.none,
@@ -266,6 +265,8 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
 
   Padding dateFormatRow() {
     final dateFormatter = DateFormat("EEEE, MMMM d, yyyy 'at' h:mma");
+    TextEditingController editingController = TextEditingController(text: model.hasEndDate() ? dateFormatter.format(model.oldTimeSheetData.endDate.value): "");
+    editingController.addListener(() => model.updateDate(dateFormatter.parse(editingController.text)));
     if (model.hasEndDate()) {
       return new Padding(padding: EdgeInsets.only(left: edge, right: edge), child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
         new Flexible(
@@ -274,6 +275,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
             decoration: InputDecoration(labelText: 'Date'),
             onChanged: model.updateDate,
             initialValue: model.oldTimeSheetData.endDate.value,
+            controller: editingController,
           ),
         ),
       ]));

@@ -52,11 +52,19 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   /// returns: Colors.red for being out of plan otherwise Colors.green
   Color progress({Duration criticalTime = const Duration(days: 7)}) {
     assert (hasEndDate());
-    int daysToWork = endDate.value.difference(startDate.value).inDays;
-    int daysGone = DateTime.now().difference(startDate.value).inDays;
+    int daysToWork = endDate.value
+        .difference(startDate.value)
+        .inDays;
+    int daysGone = DateTime
+        .now()
+        .difference(startDate.value)
+        .inDays;
     double percentageGone = daysGone / daysToWork;
     var timeTargetToToday;
-    if(daysToWork - daysGone <= criticalTime.inDays) {
+    if (daysGone > daysToWork) {
+      return Colors.black;
+    }
+    if (daysToWork - daysGone <= criticalTime.inDays) {
       timeTargetToToday = percentageGone * initialTime;
     } else {
       timeTargetToToday = (daysGone / (daysToWork - criticalTime.inDays)) * (initialTime / 2);
