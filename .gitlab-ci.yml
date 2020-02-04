@@ -1,0 +1,42 @@
+image: cirrusci/flutter:stable
+
+stages:
+  - build
+  - analyze
+  - test
+
+build:
+  stage: build
+
+  script:
+    - flutter build aot
+
+  tags:
+    - shared
+
+  only:
+    - merge_requests
+
+unit_test:
+  stage: test
+
+  script:
+    - flutter test test/*
+
+  tags:
+    - shared
+
+  only:
+    - merge_requests
+
+analyze:
+  stage: analyze
+
+  script:
+    - echo job excluded
+
+  tags:
+    - shared
+
+  only:
+    - merge_requests
