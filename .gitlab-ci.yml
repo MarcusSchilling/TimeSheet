@@ -11,23 +11,13 @@ build:
   script:
     - flutter build aot
 
-  tags:
-    - shared
-
 unit_test:
   stage: test
 
   script:
     - flutter test test/*
-
-  tags:
-    - shared
-
 analyze:
   stage: analyze
 
   script:
     - echo job excluded
-
-  tags:
-    - shared
