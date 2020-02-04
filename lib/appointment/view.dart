@@ -128,9 +128,9 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   @override
   void dispose() {
     timer.cancel();
+    timer = null;
     super.dispose();
   }
-
 
   Padding stopWatch() {
     timer = new Timer.periodic(new Duration(milliseconds: 300),
