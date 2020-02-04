@@ -61,7 +61,7 @@ class TimeSheetData extends Comparable<TimeSheetData>{
         .inDays;
     double percentageGone = daysGone / daysToWork;
     var timeTargetToToday;
-    if (daysGone > daysToWork) {
+    if (DateTime.now().compareTo(endDate.value) > 0) {
       return Colors.black;
     }
     if (daysToWork - daysGone <= criticalTime.inDays) {

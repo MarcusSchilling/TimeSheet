@@ -23,7 +23,7 @@ dependencies:
   test: ^1.5.1+1
   optional: ^3.0.0+2
   logging: ^0.11.3+2
-  sqflite: ^0.13.0
+  sqflite: ^1.2.0
   datetime_picker_formfield: ^0.1.7
 
 dev_dependencies:

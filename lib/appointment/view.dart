@@ -128,8 +128,14 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   @override
   void dispose() {
     timer.cancel();
-    timer = null;
     super.dispose();
+  }
+
+  @override
+  setState(fn) {
+    if(mounted) {
+      super.setState(fn);
+    }
   }
 
   Padding stopWatch() {

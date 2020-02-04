@@ -7,10 +7,6 @@ import 'package:flutter_app/overview/overview_model.dart';
 import 'package:flutter_app/timesheet.dart';
 import 'package:optional/optional_internal.dart';
 
-void main() {
-  var overviewController = OverviewController(DataServiceImpl());
-  runApp(overviewController.view);
-}
 typedef void MoveToDetailView(Optional<TimeSheetData> timeSheet);
 
 class OverviewController {

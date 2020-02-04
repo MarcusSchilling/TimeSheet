@@ -3,6 +3,7 @@ import 'package:flutter_app/services/data_service_impl.dart';
 import 'overview/overview_controller.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   var overviewController = OverviewController(DataServiceImpl());
   runApp(overviewController.view);
 }
