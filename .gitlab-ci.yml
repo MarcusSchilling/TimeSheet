@@ -14,9 +14,6 @@ build:
   tags:
     - shared
 
-  only:
-    - merge_requests
-
 unit_test:
   stage: test
 
@@ -26,9 +23,6 @@ unit_test:
   tags:
     - shared
 
-  only:
-    - merge_requests
-
 analyze:
   stage: analyze
 
@@ -37,6 +31,3 @@ analyze:
 
   tags:
     - shared
-
-  only:
-    - merge_requests
