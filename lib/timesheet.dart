@@ -101,7 +101,7 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   void decrement({Duration duration}) {
     assert (duration == null || !duration.isNegative);
     if (duration != null) {
-      this.timeDone += duration.inMinutes / 60.0;
+      this.timeDone += duration.inSeconds / (60.0*60.0);
     } else {
       this.timeDone += stepsTimeDone;
     }

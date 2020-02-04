@@ -80,7 +80,7 @@ void main() {
 
 
     await tester.tap(find.byKey(Constants.startStopWatch));
-    sleep(Duration(minutes: 1, seconds: 10));
+    sleep(Duration(minutes: 0, seconds: 2));
     await tester.tap(find.byKey(Constants.startStopWatch));
     await tester.tap(find.byKey(Constants.saveButtonKey));
     //await tester.pumpWidget(overviewController.view);
