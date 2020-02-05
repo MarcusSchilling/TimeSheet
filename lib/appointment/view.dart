@@ -127,7 +127,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
 
   @override
   void dispose() {
-    timer.cancel();
+    timer.cancel();//fail
     super.dispose();
   }
 
@@ -276,7 +276,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     if (model.hasEndDate()) {
       return new Padding(padding: EdgeInsets.only(left: edge, right: edge), child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
         new Flexible(
-          child: DateTimePickerFormField(
+          child: DateTimeField(
             format: dateFormatter,
             decoration: InputDecoration(labelText: 'Date'),
             onChanged: model.updateDate,
@@ -288,7 +288,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     } else {
       return new Padding(padding: EdgeInsets.only(left: edge, right: edge), child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
         new Flexible(
-          child: DateTimePickerFormField(
+          child: DateTimeField(
             format: dateFormatter,
             decoration: InputDecoration(labelText: 'Date'),
             onChanged: model.updateDate,
