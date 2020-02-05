@@ -15,7 +15,8 @@ unit_test:
   stage: test
 
   script:
-    - flutter --no-color test --machine test
+    - flutter packages get
+    - flutter test
 analyze:
   stage: analyze
 
