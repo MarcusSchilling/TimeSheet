@@ -15,7 +15,6 @@ unit_test:
   stage: test
 
   script:
-    - flutter packages get
     - flutter test
 analyze:
   stage: analyze
