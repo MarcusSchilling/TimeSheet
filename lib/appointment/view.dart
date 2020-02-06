@@ -22,20 +22,21 @@ class AppointmentView extends StatelessWidget {
   StopWatchAction startStopWatch;
   StopWatchAction resetWatch;
 
-  AppointmentView(this.save, this.model, this.exit, this.deleteTimeSheet, this.startStopWatch, this.resetWatch);
+  AppointmentView(this.save, this.model, this.exit, this.deleteTimeSheet,
+      this.startStopWatch, this.resetWatch);
 
   @override
   Widget build(BuildContext context) {
-    view = MyAppointmentView(model, save, exit, deleteTimeSheet, startStopWatch, resetWatch,
+    view = MyAppointmentView(
+        model, save, exit, deleteTimeSheet, startStopWatch, resetWatch,
         title: "Appointment");
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "Appointment",
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-      ),
-      home: view
-    );
+        debugShowCheckedModeBanner: false,
+        title: "Appointment",
+        theme: ThemeData(
+          primarySwatch: Colors.red,
+        ),
+        home: view);
   }
 
   void error(String errorMessage) {
@@ -48,7 +49,8 @@ class AppointmentView extends StatelessWidget {
 }
 
 class MyAppointmentView extends StatefulWidget {
-  MyAppointmentView(this.model, this.save, this.exit, this.delete, this.stopWatchAction, this.resetWatch,
+  MyAppointmentView(this.model, this.save, this.exit, this.delete,
+      this.stopWatchAction, this.resetWatch,
       {Key key, title})
       : super(key: key);
 
@@ -62,8 +64,8 @@ class MyAppointmentView extends StatefulWidget {
 
   @override
   _MyAppointmentViewState createState() {
-    viewState =
-        _MyAppointmentViewState(this.model, this.save, this.exit, this.delete, this.stopWatchAction, this.resetWatch);
+    viewState = _MyAppointmentViewState(this.model, this.save, this.exit,
+        this.delete, this.stopWatchAction, this.resetWatch);
     return viewState;
   }
 
@@ -91,7 +93,8 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   Timer timer;
   static const double edge = 10;
 
-  _MyAppointmentViewState(this.model, this.save, this.exit, this.delete, this.stopWatchAction, this.resetWatch);
+  _MyAppointmentViewState(this.model, this.save, this.exit, this.delete,
+      this.stopWatchAction, this.resetWatch);
 
   Future<bool> _onWillPop() {
     return exit();
@@ -127,34 +130,45 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
 
   @override
   void dispose() {
-    timer.cancel();//fail
+    timer.cancel(); //fail
     super.dispose();
   }
 
   @override
   setState(fn) {
-    if(mounted) {
+    if (mounted) {
       super.setState(fn);
     }
   }
 
   Padding stopWatch() {
     timer = new Timer.periodic(new Duration(milliseconds: 300),
-            (timer) => setState(() => timer.isActive));
+        (timer) => setState(() => timer.isActive));
     return new Padding(
       padding: EdgeInsets.only(left: edge, right: edge),
       child: new Row(
         children: <Widget>[
-          Flexible(child: IconButton(onPressed: () => setState(() => resetWatch()),
-              icon: Icon(Icons.restore),
-              key: Constants.resetWatch),
-              fit: FlexFit.tight,
-              ),
-          Flexible(fit: FlexFit.tight,
-                  child: Text(model.stopwatch.stoppedTime, textAlign: TextAlign.center,),),
-          Flexible(child: IconButton(onPressed: () => setState(() => stopWatchAction()),
-              icon: Icon(model.timerIsRunning() ? Icons.stop : Icons.arrow_forward_ios),
-              key: Constants.startStopWatch),
+          Flexible(
+            child: IconButton(
+                onPressed: () => setState(() => resetWatch()),
+                icon: Icon(Icons.restore),
+                key: Constants.resetWatch),
+            fit: FlexFit.tight,
+          ),
+          Flexible(
+            fit: FlexFit.tight,
+            child: Text(
+              model.stopwatch.stoppedTime,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Flexible(
+            child: IconButton(
+                onPressed: () => setState(() => stopWatchAction()),
+                icon: Icon(model.timerIsRunning()
+                    ? Icons.stop
+                    : Icons.arrow_forward_ios),
+                key: Constants.startStopWatch),
             fit: FlexFit.tight,
           ),
         ],
@@ -177,16 +191,20 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
 
   RaisedButton deleteButton() {
     return RaisedButton(
-        onPressed: delete, padding: EdgeInsets.all(edge), child: Text("Löschen"),
-    key: Constants.deleteButtonKey);
+        onPressed: delete,
+        padding: EdgeInsets.all(edge),
+        child: Text("Löschen"),
+        key: Constants.deleteButtonKey);
   }
 
   RaisedButton saveButton() {
     return RaisedButton(
         onPressed: () {
           save();
-        }, padding: EdgeInsets.all(edge), child: Text("Speichern"),
-    key: Constants.saveButtonKey);
+        },
+        padding: EdgeInsets.all(edge),
+        child: Text("Speichern"),
+        key: Constants.saveButtonKey);
   }
 
   Row nameRow() {
@@ -270,32 +288,45 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   }
 
   Padding dateFormatRow() {
-    final dateFormatter = DateFormat("EEEE, MMMM d, yyyy 'at' h:mma");
-    TextEditingController editingController = TextEditingController(text: model.hasEndDate() ? dateFormatter.format(model.oldTimeSheetData.endDate.value): "");
-    editingController.addListener(() => model.updateDate(dateFormatter.parse(editingController.text)));
-    if (model.hasEndDate()) {
-      return new Padding(padding: EdgeInsets.only(left: edge, right: edge), child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        new Flexible(
-          child: DateTimeField(
-            format: dateFormatter,
-            decoration: InputDecoration(labelText: 'Date'),
-            onChanged: model.updateDate,
-            initialValue: model.oldTimeSheetData.endDate.value,
-            controller: editingController,
+    final dateFormatter = DateFormat("yyyy-MM-dd HH:mm");
+    return new Padding(
+        padding: EdgeInsets.only(left: edge, right: edge),
+        child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          new Flexible(
+            child: DateTimeField(
+              format: dateFormatter,
+              decoration: InputDecoration(labelText: 'Date'),
+              onChanged: model.updateDate,
+              onShowPicker: (context, current_date) async {
+                if (current_date != null) {
+                  model.getTimeSheet().endDate = Optional.of(current_date);
+                  print("current_date != null");
+                }
+                final date = await showDatePicker(
+                    context: context,
+                    firstDate: DateTime(1969),
+                    initialDate: model.getTimeSheet().endDate.isPresent
+                        ? model.getTimeSheet().endDate.value
+                        : DateTime.now(),
+                    lastDate: DateTime(2100));
+                if (date != null) {
+                  final time = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.fromDateTime(
+                        model.getTimeSheet().endDate.isPresent
+                            ? model.getTimeSheet().endDate.value
+                            : DateTime.now()),
+                  );
+                  return DateTimeField.combine(date, time);
+                } else {
+                  return model.getTimeSheet().endDate.isPresent
+                      ? model.getTimeSheet().endDate.value
+                      : DateTime.now();
+                }
+              }
+            ),
           ),
-        ),
-      ]));
-    } else {
-      return new Padding(padding: EdgeInsets.only(left: edge, right: edge), child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        new Flexible(
-          child: DateTimeField(
-            format: dateFormatter,
-            decoration: InputDecoration(labelText: 'Date'),
-            onChanged: model.updateDate,
-          ),
-        ),
-      ]));
-    }
+        ]));
   }
 
   void error(String errorMessage) {
