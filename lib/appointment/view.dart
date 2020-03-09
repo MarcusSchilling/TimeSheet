@@ -81,8 +81,12 @@ class MyAppointmentView extends StatefulWidget {
 class _MyAppointmentViewState extends State<MyAppointmentView> {
   TextField nameTF;
   TextField timeTF;
+  TextField gradeTF;
+  TextField ectsTF;
   TextEditingController nameEditingController = TextEditingController();
   TextEditingController timeEditingController = TextEditingController();
+  TextEditingController gradeEditingController = TextEditingController();
+  TextEditingController ectsEditingController = TextEditingController();
   VoidCallback save;
   AppointmentModel model;
   BuildContext context;
@@ -106,6 +110,8 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
       children: <Widget>[
         nameRow(),
         timeRow(),
+        gradeRow(),
+        ectsRow(),
         dateFormatRow(),
         deleteSaveRow(),
         stopWatch()
@@ -283,6 +289,88 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
           padding: const EdgeInsets.all(edge),
           child: timeTF,
         ))
+      ],
+    );
+  }
+
+  Row gradeRow() {
+    Text time = Text("Note: ", textAlign: TextAlign.left);
+    if (model.hasGrade()) {
+      gradeTF = TextField(
+        controller: gradeEditingController,
+        key: Constants.timeTFKey,
+        decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: "Erzielte Note:",
+            labelText: model.oldTimeSheetData.formattedGrade),
+        keyboardType: TextInputType.number,
+        onChanged: (value) => model.updateGrade(double.parse(value)),
+      );
+    } else {
+      gradeTF = TextField(
+        controller: gradeEditingController,
+        key: Constants.timeTFKey,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: "Erzielte Note:",
+        ),
+        keyboardType: TextInputType.number,
+        onChanged: (value) => model.updateGrade(double.parse(value)),
+      );
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.all(edge),
+          child: time,
+        ),
+        new Flexible(
+            child: Container(
+              padding: const EdgeInsets.all(edge),
+              child: gradeTF,
+            ))
+      ],
+    );
+  }
+
+  Row ectsRow() {
+    Text time = Text("ECTS: ", textAlign: TextAlign.left);
+    if (model.hasGrade()) {
+      ectsTF = TextField(
+        controller: ectsEditingController,
+        key: Constants.timeTFKey,
+        decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: "ECTS:",
+            labelText: model.oldTimeSheetData.formattedGrade),
+        keyboardType: TextInputType.number,
+        onChanged: (value) => model.updateECTS(double.parse(value)),
+      );
+    } else {
+      ectsTF = TextField(
+        controller: ectsEditingController,
+        key: Constants.timeTFKey,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: "ECTS:",
+        ),
+        keyboardType: TextInputType.number,
+        onChanged: (value) => model.updateECTS(double.parse(value)),
+      );
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.all(edge),
+          child: time,
+        ),
+        new Flexible(
+            child: Container(
+              padding: const EdgeInsets.all(edge),
+              child: ectsTF,
+            ))
       ],
     );
   }

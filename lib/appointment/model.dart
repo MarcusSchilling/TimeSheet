@@ -33,6 +33,14 @@ class AppointmentModel {
     updatedOrNewTimeSheetData.name = name;
   }
 
+  void updateGrade(double grade) {
+    updatedOrNewTimeSheetData.grade = Optional.of(grade);
+  }
+
+  void updateECTS(double ects) {
+    updatedOrNewTimeSheetData.ects = Optional.of(ects);
+  }
+
   bool hasName() => oldTimeSheetData.name != null;
   bool hasTime() => oldTimeSheetData.initialTime != null;
   bool hasEndDate() => oldTimeSheetData.endDate != null && oldTimeSheetData.endDate.isPresent;
@@ -48,5 +56,7 @@ class AppointmentModel {
   void decrementWithStopwatch() {
     updatedOrNewTimeSheetData.decrement(duration: stopwatch.getStoppedTime());
   }
+
+  bool hasGrade() => oldTimeSheetData.grade.isPresent;
 
 }

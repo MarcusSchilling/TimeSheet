@@ -1,6 +1,8 @@
+import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/grade.dart';
 import 'package:optional/optional_internal.dart';
 
 class TimeSheetData extends Comparable<TimeSheetData>{
@@ -10,6 +12,8 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   double initialTime;
   Optional<DateTime> startDate;
   Optional<DateTime> endDate;
+  Optional<double> grade = Optional.empty();
+  Optional<double> ects = Optional.empty();
 
   static const double stepsTimeDone = 0.25;
 
@@ -27,7 +31,6 @@ class TimeSheetData extends Comparable<TimeSheetData>{
               timeDone == other.timeDone &&
               name == other.name &&
               startDate == other.startDate;
-
 
 
   @override
@@ -75,6 +78,10 @@ class TimeSheetData extends Comparable<TimeSheetData>{
       return Colors.green;
     }
   }
+
+  String get formattedGrade => grade.toString();
+
+  String get formattedECTS => ects.toString();
 
   String get formattedTimeDone => ((timeDone * 100).round() / 100).toString();
 
