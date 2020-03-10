@@ -12,15 +12,15 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   double initialTime;
   Optional<DateTime> startDate;
   Optional<DateTime> endDate;
-  Optional<double> grade = Optional.empty();
-  Optional<double> ects = Optional.empty();
+  Optional<double> grade;
+  Optional<double> ects;
 
   static const double stepsTimeDone = 0.25;
 
   // defines how much time you can be in delay and still being seen as in time.
   static const Duration acceptedTimeBuffer = Duration(hours: 3);
 
-  TimeSheetData.from(this.timeDone, this.name, this.startDate, this.endDate, this.initialTime);
+  TimeSheetData.from(this.timeDone, this.name, this.startDate, this.endDate, this.initialTime, this.grade, this.ects);
 
   get timePassed => endDate.isPresent && endDate.value.compareTo(DateTime.now()) < 0;
 
@@ -79,9 +79,9 @@ class TimeSheetData extends Comparable<TimeSheetData>{
     }
   }
 
-  String get formattedGrade => grade.toString();
+  String get formattedGrade => grade.value.toString();
 
-  String get formattedECTS => ects.toString();
+  String get formattedECTS => ects.value.toString();
 
   String get formattedTimeDone => ((timeDone * 100).round() / 100).toString();
 

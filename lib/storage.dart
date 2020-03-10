@@ -14,25 +14,29 @@ class Storage {
 
   Future<void> writeCounter(TimeSheetData timeSheet) async {
     return database.then((db) => db.transaction((tr) => tr.execute(
-            "INSERT INTO Tasks(name, time_done, start_date, end_date, initial_time) VALUES(?,?,?,?,?)",
+            "INSERT INTO Tasks(name, time_done, start_date, end_date, initial_time, grade, ects) VALUES(?,?,?,?,?,?,?)",
             [
               timeSheet.name,
               timeSheet.timeDone,
               timeSheet.hasStartDate() ? timeSheet.startDate.value.toIso8601String() : null,
               timeSheet.hasEndDate() ? timeSheet.endDate.value.toIso8601String() : null,
-              timeSheet.initialTime
+              timeSheet.initialTime,
+              timeSheet.grade.orElse(null),
+              timeSheet.ects.orElse(null)
             ])));
   }
 
   Future<void> updateTimeSheet(TimeSheetData timeSheet) {
     return database.then((db) => db.transaction((tr) => tr.execute(
-            "UPDATE Tasks SET time_done = ?, start_date = ?, end_date = ?, initial_time = ? WHERE name == ?",
+            "UPDATE Tasks SET time_done = ?, start_date = ?, end_date = ?, initial_time = ?, grade = ?, ects = ? WHERE name == ?",
             [
               timeSheet.timeDone,
               timeSheet.hasStartDate() ? timeSheet.startDate.value.toIso8601String() : null,
               timeSheet.hasEndDate() ? timeSheet.endDate.value.toIso8601String() : null,
               timeSheet.initialTime,
-              timeSheet.name
+              timeSheet.name,
+              timeSheet.grade.orElse(null),
+              timeSheet.ects.orElse(null)
             ])));
   }
 
@@ -57,7 +61,7 @@ class Storage {
   Future<Database> getDatabase() async {
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'demo.db');
-    return await openDatabase(path, version: 4,
+    return await openDatabase(path, version: 5,
         onUpgrade: (db, oldVersion, newVersion) {
           switch (oldVersion) {
             case 1:
@@ -85,13 +89,18 @@ class Storage {
                   "INSERT INTO Tasks(name, time_done, start_date, end_date, initial_time) Select name, initial_time - time, date, end_date, initial_time from temp_Tasks;" +
                   "Drop table temp_Tasks";
               db.transaction((tr) => tr.execute(update));
+              continue fourthVersionUpdate;
+            fourthVersionUpdate:
+            case 4:
+              db.transaction((txn) => txn.execute("ALTER TABLE Tasks ADD grade REAL DEFAULT(0)"))
+              .then((txn) => db.transaction((txn) => txn.execute("ALTER TABLE Tasks ADD ects REAL DEFAULT(0)")));
               break;
             default:
               break;
           }
         },
         onCreate: (Database db, int version) async {
-          db.execute('CREATE TABLE Tasks (name TEXT PRIMARY KEY, time_done REAL, start_date TEXT, end_date TEXT, initial_time REAL)');
+          db.execute('CREATE TABLE Tasks (name TEXT PRIMARY KEY, time_done REAL, start_date TEXT, end_date TEXT, initial_time REAL, grade REAL, ects REAL)');
         });
   }
 
@@ -115,8 +124,12 @@ class Storage {
       }
       iterator.moveNext();
       var initialTime = iterator.current;
+      iterator.moveNext();
+      var grade = Optional<double>.ofNullable(iterator.current);
+      iterator.moveNext();
+      var ects = Optional<double>.ofNullable(iterator.current);
       var timeSheetData =
-          TimeSheetData.from(timeDone, name, startDate, endDate, initialTime);
+          TimeSheetData.from(timeDone, name, startDate, endDate, initialTime, grade, ects);
       timeSheets.add(timeSheetData);
     }
     return timeSheets;

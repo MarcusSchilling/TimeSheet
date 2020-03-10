@@ -336,14 +336,14 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
 
   Row ectsRow() {
     Text time = Text("ECTS: ", textAlign: TextAlign.left);
-    if (model.hasGrade()) {
+    if (model.hasECTS()) {
       ectsTF = TextField(
         controller: ectsEditingController,
         key: Constants.timeTFKey,
         decoration: InputDecoration(
             border: InputBorder.none,
             hintText: "ECTS:",
-            labelText: model.oldTimeSheetData.formattedGrade),
+            labelText: model.oldTimeSheetData.formattedECTS),
         keyboardType: TextInputType.number,
         onChanged: (value) => model.updateECTS(double.parse(value)),
       );
