@@ -385,6 +385,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
               format: dateFormatter,
               decoration: InputDecoration(labelText: 'Date'),
               onChanged: model.updateDate,
+              initialValue: model.getOldTimeSheet().endDate.isPresent ? model.getOldTimeSheet().endDate.value : null,
               onShowPicker: (context, current_date) async {
                 if (current_date != null) {
                   model.getTimeSheet().endDate = Optional.of(current_date);
