@@ -6,6 +6,7 @@ import 'package:flutter_app/overview/overview.dart';
 import 'package:flutter_app/overview/overview_model.dart';
 import 'package:flutter_app/timesheet.dart';
 import 'package:optional/optional_internal.dart';
+import 'package:test/test.dart';
 
 typedef void MoveToDetailView(Optional<TimeSheetData> timeSheet);
 
@@ -25,7 +26,7 @@ class OverviewController {
     view = Overview(model,
       performClickOnTimeSheet: (TimeSheetData timeSheet) {
         timeSheet.decrement();
-        this.dataService.update(timeSheet);
+        this.dataService.updateTimeDone(timeSheet);
         model.updateAll();
         return;
       },

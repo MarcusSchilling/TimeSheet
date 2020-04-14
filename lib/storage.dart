@@ -26,18 +26,8 @@ class Storage {
             ])));
   }
 
-  Future<void> updateTimeSheet(TimeSheetData timeSheet) {
-    return database.then((db) => db.transaction((tr) => tr.execute(
-            "UPDATE Tasks SET time_done = ?, start_date = ?, end_date = ?, initial_time = ?, grade = ?, ects = ? WHERE name == ?",
-            [
-              timeSheet.timeDone,
-              timeSheet.hasStartDate() ? timeSheet.startDate.value.toIso8601String() : null,
-              timeSheet.hasEndDate() ? timeSheet.endDate.value.toIso8601String() : null,
-              timeSheet.initialTime,
-              timeSheet.name,
-              timeSheet.grade.orElse(null),
-              timeSheet.ects.orElse(null)
-            ])));
+  Future<void> updateTimeDone(TimeSheetData timeSheet) {
+    return database.then((db) => db.rawUpdate("UPDATE Tasks SET time_done = ? WHERE name == ?", [timeSheet.timeDone, timeSheet.name]));
   }
 
   Future<List<TimeSheetData>> readCounter(String name) async {

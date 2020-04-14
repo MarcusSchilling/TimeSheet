@@ -38,7 +38,7 @@ class MockDataService implements DataService {
   }
 
   @override
-  Future<void> update(TimeSheetData timeSheet) async{
+  Future<void> updateTimeDone(TimeSheetData timeSheet) async{
     exists(timeSheet).then((exist) {
       if (exist) {
         var timeSheetWhichShouldBeUpdated = this.timeSheets.firstWhere((e) => timeSheet.name == e.name);
