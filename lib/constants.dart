@@ -18,6 +18,12 @@ class Constants {
 
   static const Key timeTFKey = Key("time_text_field");
 
+  static const Key gradeTFKey = Key("grade_text_field");
+
+  static const Key ectsTFKey = Key("ects_text_field");
+
+  static const Key TFKey = Key("time_text_field");
+
   static const Key deleteButtonKey = Key("delete_button");
 
   static const Key saveButtonKey = Key("save_button");

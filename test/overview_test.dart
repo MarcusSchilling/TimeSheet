@@ -30,7 +30,7 @@ void main() {
     var timeSheetData = TimeSheetData.from(0, "WASA",
         timeNow,
         endTime,
-        40, null, null);
+        40, Optional.empty(), Optional.empty());
     await mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
@@ -52,7 +52,7 @@ void main() {
     var timeSheetData = TimeSheetData.from(0, "WASA",
         timeNow,
         endTime,
-        40, null, null);
+        40, Optional.empty(), Optional.empty());
     await mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
@@ -130,7 +130,7 @@ void main() {
     var timeSheetData = TimeSheetData.from(0, "WASA",
         timeNow,
         endTime,
-        TimeSheetData.stepsTimeDone, null, null);
+        TimeSheetData.stepsTimeDone, Optional.empty(), Optional.empty());
     mockDataService.store(timeSheetData);
     AppointmentController appointmentController;
     OverviewController overviewController = OverviewController(mockDataService, moveToDetailView: (timeSheet) {
@@ -158,7 +158,7 @@ void main() {
     var timeSheetData = TimeSheetData.from(0, "WASA",
         Optional.of(DateTime.now().add(Duration(days: -10))),
         endTime,
-        100, null, null);
+        100, Optional.empty(), Optional.empty());
     mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
@@ -169,7 +169,7 @@ void main() {
     var timeSheetData = TimeSheetData.from(0, "WASA",
         Optional.of(DateTime.now().add(Duration(days: -10))),
         Optional<DateTime>.empty(),
-        100, null, null);
+        100, Optional.empty(), Optional.empty());
     mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);

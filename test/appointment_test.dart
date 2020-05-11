@@ -42,7 +42,7 @@ void main() {
     var timeSheetToUpdate = TimeSheetData.from(0,
         "Hallo",
         Optional.of(DateTime.now()),
-        Optional<DateTime>.empty(), 100,null,null);
+        Optional<DateTime>.empty(), 100,Optional.empty(),Optional.empty());
     await dataService.store(timeSheetToUpdate);
     OverviewController overviewController;
     AppointmentController emptyAppointmentController
@@ -69,7 +69,7 @@ void main() {
     var timeSheetToUpdate = TimeSheetData.from(0,
         "Hallo",
         Optional.of(DateTime.now()),
-        Optional<DateTime>.empty(), 100,null,null);
+        Optional<DateTime>.empty(), 100,Optional.empty(),Optional.empty());
     await dataService.store(timeSheetToUpdate);
     OverviewController overviewController;
     AppointmentController emptyAppointmentController
