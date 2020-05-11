@@ -25,7 +25,7 @@ class OverviewController {
     view = Overview(model,
       performClickOnTimeSheet: (TimeSheetData timeSheet) {
         timeSheet.decrement();
-        this.dataService.update(timeSheet);
+        this.dataService.updateTimeDone(timeSheet);
         model.updateAll();
         return;
       },

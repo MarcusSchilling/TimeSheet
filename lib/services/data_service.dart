@@ -7,7 +7,7 @@ abstract class DataService {
 
     Future<void> store(TimeSheetData timeSheet);
 
-    Future<void> update(TimeSheetData timeSheet);
+    Future<void> updateTimeDone(TimeSheetData timeSheet);
 
     Future<void> replace(TimeSheetData timeSheet, TimeSheetData oldTimeSheet);
 

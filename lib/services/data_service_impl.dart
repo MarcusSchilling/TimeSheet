@@ -19,8 +19,8 @@ class DataServiceImpl implements DataService{
     return storage.writeCounter(timeSheet);
   }
 
-  Future<void> update(TimeSheetData timeSheet) {
-    return storage.updateTimeSheet(timeSheet);
+  Future<void> updateTimeDone(TimeSheetData timeSheet) {
+    return storage.updateTimeDone(timeSheet);
   }
 
   Future<void> replace(TimeSheetData timeSheet, TimeSheetData oldTimeSheet) {
@@ -29,7 +29,7 @@ class DataServiceImpl implements DataService{
 
   Future<bool> exists(TimeSheetData timeSheet) {
     return storage.readCounter(timeSheet.name)
-        .then((value) => true, onError: () => false);
+        .then((value) => true, onError: (err) => false);
   }
 
   Future<void> remove(TimeSheetData toDelete) {

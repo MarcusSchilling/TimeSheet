@@ -10,10 +10,10 @@ class AppointmentModel {
   Stopwatch stopwatch;
 
   AppointmentModel.of(Optional<TimeSheetData> timeSheet) {
-    this.oldTimeSheetData = timeSheet.isPresent ? timeSheet.value : TimeSheetData.from(0, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null);
+    this.oldTimeSheetData = timeSheet.isPresent ? timeSheet.value : TimeSheetData.from(0, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null, Optional.empty(), Optional.empty());
     this.updatedOrNewTimeSheetData = timeSheet.isPresent
-    ? TimeSheetData.from(timeSheet.value.timeDone, timeSheet.value.name, timeSheet.value.startDate, timeSheet.value.endDate, timeSheet.value.initialTime):
-    TimeSheetData.from(0, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null);
+    ? TimeSheetData.from(timeSheet.value.timeDone, timeSheet.value.name, timeSheet.value.startDate, timeSheet.value.endDate, timeSheet.value.initialTime, timeSheet.value.grade, timeSheet.value.ects):
+    TimeSheetData.from(0, null, Optional.of(DateTime.now()), Optional<DateTime>.empty(), null, Optional.empty(), Optional.empty());
     stopwatch = Stopwatch();
   }
 
@@ -33,6 +33,14 @@ class AppointmentModel {
     updatedOrNewTimeSheetData.name = name;
   }
 
+  void updateGrade(double grade) {
+    updatedOrNewTimeSheetData.grade = Optional.of(grade);
+  }
+
+  void updateECTS(double ects) {
+    updatedOrNewTimeSheetData.ects = Optional.of(ects);
+  }
+
   bool hasName() => oldTimeSheetData.name != null;
   bool hasTime() => oldTimeSheetData.initialTime != null;
   bool hasEndDate() => oldTimeSheetData.endDate != null && oldTimeSheetData.endDate.isPresent;
@@ -48,5 +56,9 @@ class AppointmentModel {
   void decrementWithStopwatch() {
     updatedOrNewTimeSheetData.decrement(duration: stopwatch.getStoppedTime());
   }
+
+  bool hasGrade() => oldTimeSheetData.grade.isPresent;
+
+  bool hasECTS() => oldTimeSheetData.ects.isPresent;
 
 }

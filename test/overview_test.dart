@@ -30,7 +30,7 @@ void main() {
     var timeSheetData = TimeSheetData.from(0, "WASA",
         timeNow,
         endTime,
-        40);
+        40, null, null);
     await mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
@@ -52,7 +52,7 @@ void main() {
     var timeSheetData = TimeSheetData.from(0, "WASA",
         timeNow,
         endTime,
-        40);
+        40, null, null);
     await mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
@@ -71,7 +71,9 @@ void main() {
         "WASA",
         timeNow,
         endTime,
-        40);
+        40,
+        null,
+        null);
     var result = mockDataService.timeSheets.first;
     expect(result, expected);
   });
@@ -81,7 +83,8 @@ void main() {
     var timeSheetData = TimeSheetData.from(0, "WASA",
         Optional.of(DateTime.now().add(Duration(days: -12))),
         Optional.of(DateTime.now().add(Duration(days: -10))),
-        TimeSheetData.stepsTimeDone);
+        TimeSheetData.stepsTimeDone,
+        null, null);
     mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
@@ -99,7 +102,7 @@ void main() {
     var timeSheetData = TimeSheetData.from(0, "WASA",
         timeNow,
         endTime,
-        TimeSheetData.stepsTimeDone);
+        TimeSheetData.stepsTimeDone, null, null);
     mockDataService.store(timeSheetData);
     AppointmentController appointmentController;
     OverviewController overviewController = OverviewController(mockDataService, moveToDetailView: (timeSheet) {
@@ -127,7 +130,7 @@ void main() {
     var timeSheetData = TimeSheetData.from(0, "WASA",
         timeNow,
         endTime,
-        TimeSheetData.stepsTimeDone);
+        TimeSheetData.stepsTimeDone, null, null);
     mockDataService.store(timeSheetData);
     AppointmentController appointmentController;
     OverviewController overviewController = OverviewController(mockDataService, moveToDetailView: (timeSheet) {
@@ -155,7 +158,7 @@ void main() {
     var timeSheetData = TimeSheetData.from(0, "WASA",
         Optional.of(DateTime.now().add(Duration(days: -10))),
         endTime,
-        100);
+        100, null, null);
     mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
@@ -166,7 +169,7 @@ void main() {
     var timeSheetData = TimeSheetData.from(0, "WASA",
         Optional.of(DateTime.now().add(Duration(days: -10))),
         Optional<DateTime>.empty(),
-        100);
+        100, null, null);
     mockDataService.store(timeSheetData);
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
