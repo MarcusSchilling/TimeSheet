@@ -294,11 +294,11 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
   }
 
   Row gradeRow() {
-    Text time = Text("Note: ", textAlign: TextAlign.left);
+    Text grade = Text("Note: ", textAlign: TextAlign.left);
     if (model.hasGrade()) {
       gradeTF = TextField(
         controller: gradeEditingController,
-        key: Constants.timeTFKey,
+        key: Constants.gradeTFKey,
         decoration: InputDecoration(
             border: InputBorder.none,
             hintText: "Erzielte Note:",
@@ -309,7 +309,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     } else {
       gradeTF = TextField(
         controller: gradeEditingController,
-        key: Constants.timeTFKey,
+        key: Constants.gradeTFKey,
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: "Erzielte Note:",
@@ -323,7 +323,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
       children: <Widget>[
         Container(
           padding: const EdgeInsets.all(edge),
-          child: time,
+          child: grade,
         ),
         new Flexible(
             child: Container(
@@ -339,7 +339,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     if (model.hasECTS()) {
       ectsTF = TextField(
         controller: ectsEditingController,
-        key: Constants.timeTFKey,
+        key: Constants.ectsTFKey,
         decoration: InputDecoration(
             border: InputBorder.none,
             hintText: "ECTS:",
@@ -350,7 +350,7 @@ class _MyAppointmentViewState extends State<MyAppointmentView> {
     } else {
       ectsTF = TextField(
         controller: ectsEditingController,
-        key: Constants.timeTFKey,
+        key: Constants.ectsTFKey,
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: "ECTS:",
