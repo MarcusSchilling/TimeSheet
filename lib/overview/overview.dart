@@ -170,15 +170,15 @@ class _MyRowItemState extends State<_MyRowItem> {
     );
     if (timeSheet.hasEndDate()) {
       return ListTile(
-          title: Text(timeSheet.title,
+          title: Text(timeSheet.title(DateTime.now()),
               textDirection: TextDirection.ltr, textAlign: TextAlign.left,
-          style: TextStyle(color: timeSheet.progressColor()),),
+          style: TextStyle(color: timeSheet.progressColor(currentTime: DateTime.now())),),
           trailing:
           incrementTimeDoneButton,
           leading: Text(timeSheet.formattedDate));
     }
     return ListTile(
-        title: Text(timeSheet.title,
+        title: Text(timeSheet.title(DateTime.now()),
             textDirection: TextDirection.ltr, textAlign: TextAlign.left),
         trailing:
         incrementTimeDoneButton);

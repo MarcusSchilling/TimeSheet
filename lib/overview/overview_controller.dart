@@ -20,7 +20,7 @@ class OverviewController {
   OverviewController(DataService dataService, {MoveToDetailView moveToDetailView}) {
     this.dataService = dataService;
     var loadedTimeSheets = this.dataService.getTimeSheetData().then((timesheets) async {
-      return timesheets.where((td) => !td.timePassed).toList();
+      return timesheets.where((td) => !td.timePassed(currentTime: DateTime.now())).toList();
     } );
     model = OverviewModel();
     view = Overview(model,

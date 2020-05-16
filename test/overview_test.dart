@@ -13,6 +13,7 @@ import 'package:flutter_app/services/data_service_impl.dart';
 import 'package:flutter_app/overview/overview.dart';
 import 'package:flutter_app/overview/overview_controller.dart';
 import 'package:flutter_app/overview/overview_model.dart';
+import 'package:flutter_app/stopwatch.dart';
 import 'package:flutter_app/timesheet.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:optional/optional_internal.dart';
@@ -36,8 +37,8 @@ void main() {
     await tester.pumpWidget(overviewController.view);
     expect(find.byKey(Constants.listElementKey), findsOneWidget);
 
-    expect(find.text(timeSheetData.title), findsOneWidget);
-    expect(find.text(timeSheetData.title + " sodale"), findsNothing);
+    expect(find.text(timeSheetData.title(DateTime.now())), findsOneWidget);
+    expect(find.text(timeSheetData.title(DateTime.now()) + " sodale"), findsNothing);
 
 
 
@@ -57,14 +58,14 @@ void main() {
     OverviewController overviewController = OverviewController(mockDataService);
     await tester.pumpWidget(overviewController.view);
 
-    var oldTitle = timeSheetData.title;
+    var oldTitle = timeSheetData.title(DateTime.now());
 
     //tap time done
     await tester.tap(find.byKey(Constants.incrementButtonKey));
     await tester.pump();
 
     expect(find.text(oldTitle), findsNothing);
-    expect(find.text(timeSheetData.title), findsOneWidget);
+    expect(find.text(timeSheetData.title(DateTime.now())), findsOneWidget);
 
     TimeSheetData expected = TimeSheetData.from(
         TimeSheetData.stepsTimeDone,
@@ -90,7 +91,7 @@ void main() {
     await tester.pumpWidget(overviewController.view);
     //tap time done
 
-    expect(find.text(timeSheetData.title), findsNothing);
+    expect(find.text(timeSheetData.title(DateTime.now())), findsNothing);
     expect(find.byKey(Constants.incrementButtonKey), findsNothing);
     List list = List();
     list.add(timeSheetData);
@@ -111,15 +112,15 @@ void main() {
     await tester.pumpWidget(overviewController.view);
     //tap time done
 
-    expect(find.text(timeSheetData.title), findsOneWidget);
-    expect(find.text(timeSheetData.title + " sodale"), findsNothing);
+    expect(find.text(timeSheetData.title(DateTime.now())), findsOneWidget);
+    expect(find.text(timeSheetData.title(DateTime.now()) + " sodale"), findsNothing);
 
     expect(find.text(timeSheetData.formattedDate), findsOneWidget);
     expect(find.byKey(Constants.overviewScaffoldKey), findsOneWidget);
 
     await tester.tap(find.byKey(Constants.newAppointmentButtonKey));
     await tester.pumpWidget(appointmentController.view);
-    expect(find.text(timeSheetData.title), findsNothing);
+    expect(find.text(timeSheetData.title(DateTime.now())), findsNothing);
     expect(find.byKey(Constants.overviewScaffoldKey), findsNothing);
     expect(find.byKey(Constants.appointmentScaffoldKey), findsOneWidget);
     expect(mockDataService.timeSheets.elementAt(0), timeSheetData);
@@ -139,15 +140,15 @@ void main() {
     await tester.pumpWidget(overviewController.view);
 
     //tap time done
-    expect(find.text(timeSheetData.title), findsOneWidget);
-    expect(find.text(timeSheetData.title + " sodale"), findsNothing);
+    expect(find.text(timeSheetData.title(DateTime.now())), findsOneWidget);
+    expect(find.text(timeSheetData.title(DateTime.now()) + " sodale"), findsNothing);
 
     expect(find.text(timeSheetData.formattedDate), findsOneWidget);
     expect(find.byKey(Constants.overviewScaffoldKey), findsOneWidget);
 
     await tester.tap(find.byKey(Constants.listElementKey));
     await tester.pumpWidget(appointmentController.view);
-    expect(find.text(timeSheetData.title), findsNothing);
+    expect(find.text(timeSheetData.title(DateTime.now())), findsNothing);
     expect(find.byKey(Constants.overviewScaffoldKey), findsNothing);
     expect(find.byKey(Constants.appointmentScaffoldKey), findsOneWidget);
     expect(mockDataService.timeSheets.elementAt(0), timeSheetData);

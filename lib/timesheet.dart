@@ -1,7 +1,9 @@
 import 'dart:ffi';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/critical.dart';
 import 'package:flutter_app/grade.dart';
 import 'package:optional/optional_internal.dart';
 
@@ -14,7 +16,7 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   Optional<DateTime> endDate;
   Optional<double> grade;
   Optional<double> ects;
-  Duration criticalTime = const Duration(days: 7);
+  CriticalTimeSpan criticalTimeSpan = const CriticalTimeSpan(Duration(days: 7), Duration(hours: 25));
 
   static const double stepsTimeDone = 0.25;
 
@@ -23,7 +25,6 @@ class TimeSheetData extends Comparable<TimeSheetData>{
 
   TimeSheetData.from(this.timeDone, this.name, this.startDate, this.endDate, this.initialTime, this.grade, this.ects);
 
-  get timePassed => endDate.isPresent && endDate.value.compareTo(DateTime.now()) < 0;
 
   @override
   bool operator ==(Object other) =>
@@ -48,18 +49,22 @@ class TimeSheetData extends Comparable<TimeSheetData>{
     return endDate.isPresent;
   }
 
+  bool timePassed({DateTime currentTime}) {
+    return endDate.isPresent && endDate.value.compareTo(currentTime) < 0;
+  }
+
   /// calculates the color of the progress made by the user
   /// the criticalTime default is 7 days. For the time before of the last 7 days
   /// the user must accomplish 50% of the initialTime after that he must accomplish
   /// a linear curve from the start to end date and equal distribution of the
   /// initial time over the
   /// returns: Colors.red for being out of plan otherwise Colors.green
-  Color progressColor() {
+  Color progressColor({DateTime currentTime}) {
     assert (hasEndDate());
-    if (DateTime.now().compareTo(endDate.value) > 0) {
+    if (currentTime.compareTo(endDate.value) > 0) {
       return Colors.black;
     }
-    var timeTargetToToday = currentTargetTime();
+    var timeTargetToToday = targetTimeToDate(currentTime);
     if (timeTargetToToday > timeDone) {
       return Colors.red;
     } else {
@@ -67,20 +72,20 @@ class TimeSheetData extends Comparable<TimeSheetData>{
     }
   }
 
-  double currentTargetTime() {
-    int daysToWork = endDate.value
-        .difference(startDate.value)
-        .inDays;
-    int daysGone = DateTime
-        .now()
-        .difference(startDate.value)
-        .inDays;
-    double percentageGone = daysGone / daysToWork;
+  double targetTimeToDate(DateTime currentTime) {
+    Duration daysToWork = endDate.value
+        .difference(startDate.value);
+    Duration daysTowardsCriticalTimePoint = daysToWork - criticalTimeSpan.timeSpan;
+    Duration daysGone =
+        currentTime
+        .difference(startDate.value);
+    var criticalTimeReached = daysToWork <= daysGone + criticalTimeSpan.timeSpan;
     double timeTargetToToday;
-    if (daysToWork - daysGone <= criticalTime.inDays) {
-      timeTargetToToday = percentageGone * initialTime;
+    if (criticalTimeReached){
+      var percentageFromCriticalToEndPassed = ((daysToWork.inMilliseconds - daysGone.inMilliseconds) / criticalTimeSpan.timeSpan.inMilliseconds);
+      timeTargetToToday = initialTime - criticalTimeSpan.timeToDo.inHours + criticalTimeSpan.timeToDo.inHours * (1.0 - percentageFromCriticalToEndPassed);
     } else {
-      timeTargetToToday = (daysGone / (daysToWork - criticalTime.inDays)) * (initialTime / 2);
+      timeTargetToToday = min(1, daysGone.inMilliseconds / daysTowardsCriticalTimePoint.inMilliseconds) * max(0, initialTime - criticalTimeSpan.timeToDo.inHours);
     }
     return timeTargetToToday;
   }
@@ -90,8 +95,6 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   String get formattedECTS => ects.value.toString();
 
   String get formattedTimeDone => ((timeDone * 100).round() / 100).toString();
-
-  String get title => name + ": " + timeDone.toString() + (hasEndDate() ? "/ " + ((currentTargetTime() * 100).round() / 100).toString(): "");
 
   double get remainingTime => initialTime - timeDone;
 
@@ -105,6 +108,11 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   @override
   String toString() {
     return initialTimeFormatted + "\n" + name + "\n" + formattedDate + '\n';
+  }
+
+  String title (DateTime currentTime) {
+    return name + ": " + timeDone.toString() + (hasEndDate() ? "/ " +
+        ((targetTimeToDate(currentTime) * 100).round() / 100).toString() : "");
   }
 
   bool isValid() {
