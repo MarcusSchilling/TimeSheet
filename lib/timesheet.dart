@@ -14,6 +14,7 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   Optional<DateTime> endDate;
   Optional<double> grade;
   Optional<double> ects;
+  Duration criticalTime = const Duration(days: 7);
 
   static const double stepsTimeDone = 0.25;
 
@@ -53,8 +54,20 @@ class TimeSheetData extends Comparable<TimeSheetData>{
   /// a linear curve from the start to end date and equal distribution of the
   /// initial time over the
   /// returns: Colors.red for being out of plan otherwise Colors.green
-  Color progress({Duration criticalTime = const Duration(days: 7)}) {
+  Color progressColor() {
     assert (hasEndDate());
+    if (DateTime.now().compareTo(endDate.value) > 0) {
+      return Colors.black;
+    }
+    var timeTargetToToday = currentTargetTime();
+    if (timeTargetToToday > timeDone) {
+      return Colors.red;
+    } else {
+      return Colors.green;
+    }
+  }
+
+  double currentTargetTime() {
     int daysToWork = endDate.value
         .difference(startDate.value)
         .inDays;
@@ -63,20 +76,13 @@ class TimeSheetData extends Comparable<TimeSheetData>{
         .difference(startDate.value)
         .inDays;
     double percentageGone = daysGone / daysToWork;
-    var timeTargetToToday;
-    if (DateTime.now().compareTo(endDate.value) > 0) {
-      return Colors.black;
-    }
+    double timeTargetToToday;
     if (daysToWork - daysGone <= criticalTime.inDays) {
       timeTargetToToday = percentageGone * initialTime;
     } else {
       timeTargetToToday = (daysGone / (daysToWork - criticalTime.inDays)) * (initialTime / 2);
     }
-    if (timeTargetToToday > timeDone) {
-      return Colors.red;
-    } else {
-      return Colors.green;
-    }
+    return timeTargetToToday;
   }
 
   String get formattedGrade => grade.value.toString();
@@ -85,7 +91,7 @@ class TimeSheetData extends Comparable<TimeSheetData>{
 
   String get formattedTimeDone => ((timeDone * 100).round() / 100).toString();
 
-  String get title => name + ": " + initialTimeFormatted + " done: " + formattedTimeDone;
+  String get title => name + ": " + timeDone.toString() + (hasEndDate() ? "/ " + ((currentTargetTime() * 100).round() / 100).toString(): "");
 
   double get remainingTime => initialTime - timeDone;
 

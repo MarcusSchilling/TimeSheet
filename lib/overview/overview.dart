@@ -172,7 +172,7 @@ class _MyRowItemState extends State<_MyRowItem> {
       return ListTile(
           title: Text(timeSheet.title,
               textDirection: TextDirection.ltr, textAlign: TextAlign.left,
-          style: TextStyle(color: timeSheet.progress()),),
+          style: TextStyle(color: timeSheet.progressColor()),),
           trailing:
           incrementTimeDoneButton,
           leading: Text(timeSheet.formattedDate));
