@@ -81,7 +81,9 @@ class TimeSheetData extends Comparable<TimeSheetData>{
         .difference(startDate.value);
     var criticalTimeReached = daysToWork <= daysGone + criticalTimeSpan.timeSpan;
     double timeTargetToToday;
-    if (criticalTimeReached){
+    if (daysToWork < daysGone) {
+      timeTargetToToday = initialTime;
+    } else if (criticalTimeReached){
       var percentageFromCriticalToEndPassed = ((daysToWork.inMilliseconds - daysGone.inMilliseconds) / criticalTimeSpan.timeSpan.inMilliseconds);
       timeTargetToToday = initialTime - criticalTimeSpan.timeToDo.inHours + criticalTimeSpan.timeToDo.inHours * (1.0 - percentageFromCriticalToEndPassed);
     } else {
