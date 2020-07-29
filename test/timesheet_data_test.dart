@@ -30,10 +30,10 @@ void main() {
     expect(timeSheetReachedCriticalTime.targetTimeToDate(uncriticalDateTime1), timeSheetReachedCriticalTime.criticalTimeSpan.timeToDo.inHours);
     expect(timeSheetReachedCriticalTime.targetTimeToDate(uncriticalDateTime2), timeSheetReachedCriticalTime.criticalTimeSpan.timeToDo.inHours * 2);
     //test that on critical time returns targetTime - criticalTimeSpan.timeToDo.inHours
-    expect(timeSheetReachedCriticalTime.targetTimeToDate(criticalDateTime), timeSheetReachedCriticalTime.initialTime - timeSheetReachedCriticalTime.criticalTimeSpan.timeToDo.inHours);
+    expect(timeSheetReachedCriticalTime.targetTimeToDate(criticalDateTime), 50.0 / 6);
     var halfTimeOfCritical = timeSheetReachedCriticalTime.criticalTimeSpan.percentageOfTimeToDo(0.5);
     var matcher = timeSheetReachedCriticalTime.initialTime - timeSheetReachedCriticalTime.criticalTimeSpan.percentageOfTimeToDo(0.5).inHours;
-    expect(timeSheetReachedCriticalTime.targetTimeToDate(criticalDateTime.add(Duration(hours: 84))), 87.5);
-    expect(timeSheetReachedCriticalTime.targetTimeToDate(endDateTime), 100);
+    expect(timeSheetReachedCriticalTime.targetTimeToDate(criticalDateTime.add(Duration(hours: 84))), 50/2);
+    expect(timeSheetReachedCriticalTime.targetTimeToDate(endDateTime), 50);
   });
 }
