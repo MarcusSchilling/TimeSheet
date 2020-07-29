@@ -84,8 +84,17 @@ class TimeSheetData extends Comparable<TimeSheetData>{
     if (daysToWork < daysGone) {
       timeTargetToToday = initialTime;
     } else if (criticalTimeReached){
+      var sundaysUntilFinalDay = 0;
+      for (DateTime i = currentTime; 0 < endDate.value.compareTo(i); i = i.add(Duration(days: 1))) {
+        if (i.weekday == DateTime.sunday) {
+          sundaysUntilFinalDay++;
+        }
+      }
       var percentageFromCriticalToEndPassed = ((daysToWork.inMilliseconds - daysGone.inMilliseconds) / criticalTimeSpan.timeSpan.inMilliseconds);
       timeTargetToToday = initialTime - criticalTimeSpan.timeToDo.inHours + criticalTimeSpan.timeToDo.inHours * (1.0 - percentageFromCriticalToEndPassed);
+      var daysUntilEndDate = endDate.value.difference(currentTime).inDays;
+      var productiveDaysRemaining = max(1, daysUntilEndDate - sundaysUntilFinalDay);// - 1 because I wouldn't study on the exam date
+      return (initialTime - timeDone) / productiveDaysRemaining;
     } else {
       timeTargetToToday = min(1, daysGone.inMilliseconds / daysTowardsCriticalTimePoint.inMilliseconds) * max(0, initialTime - criticalTimeSpan.timeToDo.inHours);
     }
