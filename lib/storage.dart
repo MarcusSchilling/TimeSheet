@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:flutter_app/services/data_service_impl.dart';
 import 'package:flutter_app/timesheet.dart';
 import 'package:optional/optional_internal.dart';
 import 'package:path/path.dart';
@@ -18,16 +16,22 @@ class Storage {
             [
               timeSheet.name,
               timeSheet.timeDone,
-              timeSheet.hasStartDate() ? timeSheet.startDate.value.toIso8601String() : null,
-              timeSheet.hasEndDate() ? timeSheet.endDate.value.toIso8601String() : null,
-              timeSheet.initialTime,
+              timeSheet.hasStartDate()
+                  ? timeSheet.startDate.value.toIso8601String()
+                  : null,
+              timeSheet.hasEndDate()
+                  ? timeSheet.endDate.value.toIso8601String()
+                  : null,
+              timeSheet.timeTarget,
               timeSheet.grade.orElse(null),
               timeSheet.ects.orElse(null)
             ])));
   }
 
   Future<void> updateTimeDone(TimeSheetData timeSheet) {
-    return database.then((db) => db.rawUpdate("UPDATE Tasks SET time_done = ? WHERE name == ?", [timeSheet.timeDone, timeSheet.name]));
+    return database.then((db) => db.rawUpdate(
+        "UPDATE Tasks SET time_done = ? WHERE name == ?",
+        [timeSheet.timeDone, timeSheet.name]));
   }
 
   Future<List<TimeSheetData>> readCounter(String name) async {
@@ -53,45 +57,48 @@ class Storage {
     String path = join(databasesPath, 'demo.db');
     return await openDatabase(path, version: 5,
         onUpgrade: (db, oldVersion, newVersion) {
-          switch (oldVersion) {
-            case 1:
-              db
-                  .transaction((tr) => tr.execute(
+      switch (oldVersion) {
+        case 1:
+          db
+              .transaction((tr) => tr.execute(
                   "ALTER TABLE Tasks ADD end_date TEXT DEFAULT('" +
                       DateTime.now().toIso8601String() +
                       "')"))
-                  .then((v) => db.execute(
+              .then((v) => db.execute(
                   'CREATE TABLE Tasks (name TEXT PRIMARY KEY, time REAL, date TEXT, end_date TEXT)'));
-              continue secondVersionUpdate;
-            secondVersionUpdate:
-            case 2:
-              db.transaction((tr) =>
-                  tr.execute("ALTER TABLE Tasks ADD initial_time REAL DEFAULT(0)"))
-                    .then((v) => db.execute(
-                    'CREATE TABLE Tasks (name TEXT PRIMARY KEY, time REAL, date TEXT, end_date TEXT, initial_time REAL)'))
+          continue secondVersionUpdate;
+        secondVersionUpdate:
+        case 2:
+          db
+              .transaction((tr) => tr.execute(
+                  "ALTER TABLE Tasks ADD initial_time REAL DEFAULT(0)"))
+              .then((v) => db.execute(
+                  'CREATE TABLE Tasks (name TEXT PRIMARY KEY, time REAL, date TEXT, end_date TEXT, initial_time REAL)'))
               .then((v) => db.execute("UPDATE Tasks SET initial_time = time"));
-              continue thirdVersionUpdate;
-            thirdVersionUpdate:  
-            case 3:
-              String update =
-                  "Alter table Tasks rename to temp_Tasks;"+
-                  "CREATE TABLE Tasks (name TEXT PRIMARY KEY, time_done REAL, start_date TEXT, end_date TEXT, initial_time REAL);"+
-                  "INSERT INTO Tasks(name, time_done, start_date, end_date, initial_time) Select name, initial_time - time, date, end_date, initial_time from temp_Tasks;" +
-                  "Drop table temp_Tasks";
-              db.transaction((tr) => tr.execute(update));
-              continue fourthVersionUpdate;
-            fourthVersionUpdate:
-            case 4:
-              db.transaction((txn) => txn.execute("ALTER TABLE Tasks ADD grade REAL DEFAULT(0)"))
-              .then((txn) => db.transaction((txn) => txn.execute("ALTER TABLE Tasks ADD ects REAL DEFAULT(0)")));
-              break;
-            default:
-              break;
-          }
-        },
-        onCreate: (Database db, int version) async {
-          db.execute('CREATE TABLE Tasks (name TEXT PRIMARY KEY, time_done REAL, start_date TEXT, end_date TEXT, initial_time REAL, grade REAL, ects REAL)');
-        });
+          continue thirdVersionUpdate;
+        thirdVersionUpdate:
+        case 3:
+          String update = "Alter table Tasks rename to temp_Tasks;" +
+              "CREATE TABLE Tasks (name TEXT PRIMARY KEY, time_done REAL, start_date TEXT, end_date TEXT, initial_time REAL);" +
+              "INSERT INTO Tasks(name, time_done, start_date, end_date, initial_time) Select name, initial_time - time, date, end_date, initial_time from temp_Tasks;" +
+              "Drop table temp_Tasks";
+          db.transaction((tr) => tr.execute(update));
+          continue fourthVersionUpdate;
+        fourthVersionUpdate:
+        case 4:
+          db
+              .transaction((txn) =>
+                  txn.execute("ALTER TABLE Tasks ADD grade REAL DEFAULT(0)"))
+              .then((txn) => db.transaction((txn) =>
+                  txn.execute("ALTER TABLE Tasks ADD ects REAL DEFAULT(0)")));
+          break;
+        default:
+          break;
+      }
+    }, onCreate: (Database db, int version) async {
+      db.execute(
+          'CREATE TABLE Tasks (name TEXT PRIMARY KEY, time_done REAL, start_date TEXT, end_date TEXT, initial_time REAL, grade REAL, ects REAL)');
+    });
   }
 
   List<TimeSheetData> transform(List<Map<String, dynamic>> list) {
@@ -125,8 +132,8 @@ class Storage {
       iterator.moveNext();
       var ects = Optional<double>.ofNullable(iterator.current);
       print(ects);
-      var timeSheetData =
-          TimeSheetData.from(timeDone, name, startDate, endDate, initialTime, grade, ects);
+      var timeSheetData = TimeSheetData.from(
+          timeDone, name, startDate, endDate, initialTime, grade, ects);
       timeSheets.add(timeSheetData);
     }
     return timeSheets;

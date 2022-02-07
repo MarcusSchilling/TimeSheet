@@ -8,7 +8,7 @@ import 'package:optional/optional_internal.dart';
 class TimeSheetData extends Comparable<TimeSheetData> {
   double timeDone;
   String name;
-  double initialTime;
+  double timeTarget;
   Optional<DateTime> startDate;
   Optional<DateTime> endDate;
   Optional<double> grade;
@@ -22,7 +22,7 @@ class TimeSheetData extends Comparable<TimeSheetData> {
   static const Duration acceptedTimeBuffer = Duration(hours: 3);
 
   TimeSheetData.from(this.timeDone, this.name, this.startDate, this.endDate,
-      this.initialTime, this.grade, this.ects);
+      this.timeTarget, this.grade, this.ects);
 
   @override
   bool operator ==(Object other) =>
@@ -68,14 +68,14 @@ class TimeSheetData extends Comparable<TimeSheetData> {
 
   double targetTimeToDate(DateTime currentTime) {
     Duration daysToWork = endDate.value.difference(startDate.value);
-    Duration daysTowardsCriticalTimePoint =
+    Duration startTimeToCriticalTimeZone =
         daysToWork - criticalTimeSpan.timeSpan;
     Duration daysGone = currentTime.difference(startDate.value);
     var criticalTimeReached =
         daysToWork <= daysGone + criticalTimeSpan.timeSpan;
     double timeTargetToToday;
     if (daysToWork < daysGone) {
-      timeTargetToToday = initialTime;
+      timeTargetToToday = timeTarget;
     } else if (criticalTimeReached) {
       var sundaysUntilFinalDay = 0;
       for (DateTime i = currentTime;
@@ -90,14 +90,25 @@ class TimeSheetData extends Comparable<TimeSheetData> {
           1,
           daysUntilEndDate -
               sundaysUntilFinalDay); // - 1 because I wouldn't study on the exam date
-      print(productiveDaysRemaining);
-      return ((initialTime / 2) / productiveDaysRemaining) + (initialTime / 2);
+
+      if (timeTarget < criticalTimeSpan.timeToDo.inHours) {
+        return ((timeTarget) / productiveDaysRemaining);
+      }
+      var totalTimeForWork = endDate.value.difference(startDate.value);
+      var criticalProductiveTimeSpanForItem =
+          totalTimeForWork.compareTo(criticalTimeSpan.timeSpan) < 0
+              ? totalTimeForWork.inDays - sundaysUntilFinalDay
+              : criticalTimeSpan.timeSpan.inDays - sundaysUntilFinalDay;
+      return ((criticalTimeSpan.timeToDo.inHours) /
+                  (criticalProductiveTimeSpanForItem)) *
+              ((criticalProductiveTimeSpanForItem) - productiveDaysRemaining) +
+          (timeTarget - criticalTimeSpan.timeToDo.inHours);
     } else {
       timeTargetToToday = min(
               1,
               daysGone.inMilliseconds /
-                  daysTowardsCriticalTimePoint.inMilliseconds) *
-          max(0, initialTime - criticalTimeSpan.timeToDo.inHours);
+                  startTimeToCriticalTimeZone.inMilliseconds) *
+          max(0, timeTarget - criticalTimeSpan.timeToDo.inHours);
     }
     return timeTargetToToday;
   }
@@ -118,7 +129,7 @@ class TimeSheetData extends Comparable<TimeSheetData> {
 
   String get formattedTimeDone => ((timeDone * 100).round() / 100).toString();
 
-  double get remainingTime => initialTime - timeDone;
+  double get remainingTime => timeTarget - timeDone;
 
   String get formattedDate => endDate.isPresent
       ? "${endDate.value.year.toString()}-"
@@ -127,7 +138,7 @@ class TimeSheetData extends Comparable<TimeSheetData> {
       : "";
 
   String get initialTimeFormatted =>
-      ((initialTime * 100).round() / 100).toString();
+      ((timeTarget * 100).round() / 100).toString();
 
   @override
   String toString() {
@@ -146,7 +157,7 @@ class TimeSheetData extends Comparable<TimeSheetData> {
 
   bool isValid() {
     return timeDone != null &&
-        initialTime != null &&
+        timeTarget != null &&
         name != null &&
         startDate != null;
   }

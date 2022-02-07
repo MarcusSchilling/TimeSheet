@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
+
 import 'package:flutter_app/appointment/appointment_controller.dart';
 import 'package:flutter_app/constants.dart';
-import 'package:flutter_app/services/data_service.dart';
 import 'package:flutter_app/overview/overview_controller.dart';
+import 'package:flutter_app/services/data_service.dart';
 import 'package:flutter_app/timesheet.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:optional/optional_internal.dart';
 
 import 'mock_extensions/MockDataService.dart';
-import 'dart:io';
 
 void main() {
 
@@ -30,7 +30,7 @@ void main() {
     var target = timeSheetData.elementAt(0);
     expect(target.name, 'Hallo');
     expect(target.timeDone, 0);
-    expect(target.initialTime, 230);
+    expect(target.timeTarget, 230);
     expect(target.startDate.value.difference(DateTime.now()).inMinutes < 3, isTrue);
     expect(target.endDate, Optional<DateTime>.empty());
   });
@@ -46,7 +46,7 @@ void main() {
     await dataService.store(timeSheetToUpdate);
     OverviewController overviewController;
     AppointmentController emptyAppointmentController
-    = AppointmentController(Optional.of(timeSheetToUpdate), dataService, 
+    = AppointmentController(Optional.of(timeSheetToUpdate), dataService,
     moveToOverview: (dataService) => overviewController = OverviewController(dataService)
     );
 
@@ -59,7 +59,7 @@ void main() {
     var target = timeSheetData.elementAt(0);
     expect(target.name, 'Hallo');
     expect(target.timeDone, 0);
-    expect(target.initialTime, 230);
+    expect(target.timeTarget, 230);
     expect(target.startDate.value.difference(DateTime.now()).inMinutes < 3, isTrue);
     expect(target.endDate, Optional<DateTime>.empty());
   });
