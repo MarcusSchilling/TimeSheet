@@ -1,14 +1,8 @@
-
-import 'dart:io';
-
 import 'package:flutter_app/services/data_service.dart';
-import 'package:flutter_app/timesheet.dart';
-import 'package:optional/optional.dart';
-
 import 'package:flutter_app/storage.dart';
-import 'package:logging/logging.dart';
+import 'package:flutter_app/timesheet.dart';
 
-class DataServiceImpl implements DataService{
+class DataServiceImpl implements DataService {
   Storage storage = Storage();
 
   Future<List<TimeSheetData>> getTimeSheetData() {
@@ -24,17 +18,18 @@ class DataServiceImpl implements DataService{
   }
 
   Future<void> replace(TimeSheetData timeSheet, TimeSheetData oldTimeSheet) {
-    return storage.delete(oldTimeSheet).then((v) => storage.writeCounter(timeSheet));
+    return storage
+        .delete(oldTimeSheet)
+        .then((v) => storage.writeCounter(timeSheet));
   }
 
   Future<bool> exists(TimeSheetData timeSheet) {
-    return storage.readCounter(timeSheet.name)
+    return storage
+        .readCounter(timeSheet.name)
         .then((value) => true, onError: (err) => false);
   }
 
   Future<void> remove(TimeSheetData toDelete) {
     return storage.delete(toDelete);
   }
-
 }
-

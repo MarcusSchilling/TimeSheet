@@ -100,10 +100,13 @@ class Storage {
       var iterator = value.values.iterator;
       iterator.moveNext();
       var name = iterator.current;
+      print(name);
       iterator.moveNext();
       var timeDone = iterator.current;
+      print(timeDone);
       iterator.moveNext();
       var startDate = Optional.of(DateTime.parse(iterator.current));
+      print(startDate);
       iterator.moveNext();
       var end = iterator.current;
       var endDate;
@@ -112,12 +115,16 @@ class Storage {
       } else {
         endDate = Optional.ofNullable(DateTime.parse(iterator.current));
       }
+      print(endDate);
       iterator.moveNext();
       var initialTime = iterator.current;
+      print(initialTime);
       iterator.moveNext();
       var grade = Optional<double>.ofNullable(iterator.current);
+      print(grade);
       iterator.moveNext();
       var ects = Optional<double>.ofNullable(iterator.current);
+      print(ects);
       var timeSheetData =
           TimeSheetData.from(timeDone, name, startDate, endDate, initialTime, grade, ects);
       timeSheets.add(timeSheetData);
